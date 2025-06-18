@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthAI - Patient Monitoring System</title>
+    <title>Health - Patient Monitoring System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -38,7 +38,6 @@
             overflow-x: hidden;
         }
 
-        /* Mobile-first layout */
         .container {
             display: flex;
             flex-direction: column;
@@ -359,24 +358,6 @@
             font-size: 1.2rem;
         }
 
-        .stream-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .url-input {
-            flex-grow: 1;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-
         .controls {
             display: flex;
             gap: 15px;
@@ -632,14 +613,6 @@
             .chart-container {
                 height: 200px;
             }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-            }
         }
 
         /* Animation for vital signs */
@@ -773,36 +746,6 @@
             min-width: 150px;
             display: inline-block;
         }
-        
-        /* ESP32-CAM Instructions */
-        .instructions {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .instructions h3 {
-            color: var(--secondary);
-            margin-bottom: 10px;
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
-        .instructions code {
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
     </style>
 </head>
 <body>
@@ -811,7 +754,7 @@
         <div class="header">
             <div class="logo">
                 <i class="fas fa-heartbeat"></i>
-                <h1>HealthAI</h1>
+                <h1>Health Monitoring</h1>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <i class="fas fa-bars"></i>
@@ -822,7 +765,7 @@
         <div class="sidebar" id="sidebar">
             <div class="logo" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <i class="fas fa-heartbeat"></i>
-                <h1>HealthAI</h1>
+                <h1>Health Monitoring</h1>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
@@ -850,7 +793,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link" id="logoutBtn">
+                    <a href="login.html" class="nav-link" id="logoutBtn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
@@ -1032,32 +975,16 @@
                         <div class="chart-title">
                             <i class="fas fa-video"></i> Camera Feed
                         </div>
-                        
-                        <!-- Stream Controls -->
-                        <div class="stream-controls">
-                            <input type="text" id="streamUrlInput" class="url-input" 
-                                   placeholder="Enter ESP32-CAM stream URL (http://192.168.115.77/stream)" 
-                                   value="http://192.168.115.77">
-                            <button class="btn btn-primary" id="setStreamBtn">
-                                <i class="fas fa-plug"></i> Connect
-                            </button>
-                        </div>
-                        
-                        <!-- Video Container -->
                         <div class="video-container">
-                            <div class="video-placeholder" id="videoPlaceholder">
-                                <i class="fas fa-video"></i> ESP32-CAM Feed
+                            <div class="video-placeholder">
+                                <i class="fas fa-video"></i> AI Camera Feed
                             </div>
-                            <img id="cameraStream" style="display:none; width:100%; height:100%; object-fit:cover;">
+		            <img id="cameraStream" style="display:none; width:100%; height:100%; object-fit:cover;">
                         </div>
-                        
-                        <!-- Camera Controls -->
+                        </div>
                         <div class="controls">
                             <button class="btn btn-primary" id="startCameraBtn">
                                 <i class="fas fa-play"></i> Start Camera
-                            </button>
-                            <button class="btn btn-danger" id="stopCameraBtn">
-                                <i class="fas fa-stop"></i> Stop Camera
                             </button>
                             <button class="btn btn-success" id="captureBtn">
                                 <i class="fas fa-camera"></i> Capture
@@ -1065,7 +992,7 @@
                             <button class="btn btn-warning" id="downloadReportBtn">
                                 <i class="fas fa-download"></i> Download Report
                             </button>
-                            <button class="btn btn-primary" id="previewReportBtn">
+                            <button class="btn btn-danger" id="previewReportBtn">
                                 <i class="fas fa-eye"></i> Preview Report
                             </button>
                         </div>
@@ -1090,20 +1017,6 @@
                             <div class="vital-status status-normal">Optimal</div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- ESP32-CAM Instructions -->
-                <div class="instructions">
-                    <h3>ESP32-CAM Setup Instructions</h3>
-                    <ol>
-                        <li>Connect your ESP32-CAM to your WiFi network</li>
-                        <li>Upload the camera streaming firmware to your device</li>
-                        <li>Find the IP address assigned to your ESP32-CAM</li>
-                        <li>Enter the stream URL in the format: <code>http://[ESP32_IP]:81/stream</code></li>
-                        <li>Click "Connect" to verify the stream URL</li>
-                        <li>Click "Start Camera" to begin streaming</li>
-                    </ol>
-                    <p><strong>Note:</strong> Make sure your computer is on the same network as the ESP32-CAM device.</p>
                 </div>
             </div>
             
@@ -1244,92 +1157,91 @@
     </div>
     
     <div class="footer">
-        <p>HealthAI Patient Monitoring System © 2023 | All rights reserved</p>
+        <p>HealthAI Patient Monitoring System © UniMAP IDP | All rights reserved</p>
     </div>
 
-    <!-- PDF Preview Modal -->
-    <div class="pdf-modal" id="pdfModal">
-        <div class="pdf-preview">
-            <button class="close-btn" id="closePdfBtn">&times;</button>
-            <h2 style="text-align:center; margin-bottom:20px; color:var(--secondary);">Health Report Preview</h2>
-            
-            <div class="pdf-page">
-                <div class="pdf-header">
-                    <h1>HealthAI Patient Report</h1>
-                    <p>Generated on: <span id="reportDate"></span></p>
-                </div>
-                
-                <h3>Patient Summary</h3>
-                <p><strong>Name:</strong> <span class="input-field">__________</span></p>
-                <p><strong>ID Number:</strong> <span class="input-field">__________</span></p>
-                
-                <h3>Heart Rate History</h3>
-                <div class="pdf-graph">
-                    Heart Rate Chart
-                </div>
-                
-                <h3>Oxygen Level History</h3>
-                <div class="pdf-graph">
-                    Oxygen Level Chart
-                </div>
-                
-                <div class="pdf-footer">
-                    Page 1 of 2
-                </div>
+   <!-- Updated PDF Preview Modal -->
+<div class="pdf-modal" id="pdfModal">
+    <div class="pdf-preview">
+        <button class="close-btn" id="closePdfBtn">&times;</button>
+        <h2 style="text-align:center; margin-bottom:20px; color:var(--secondary);">Health Report Preview</h2>
+        
+        <div class="pdf-page">
+            <div class="pdf-header">
+                <h1>Health Patient Report</h1>
+                <p>Generated on: <span id="reportDate"></span></p>
             </div>
             
-            <div class="pdf-page">
-                <div class="pdf-header">
-                    <h1>HealthAI Patient Report</h1>
-                    <p>Page 2: Detailed Analysis</p>
-                </div>
-                
-                <h3>Real-time Monitoring</h3>
-                <div class="pdf-graph">
-                    Real-time Monitoring Chart
-                </div>
-                
-                <h3>Vital Signs Summary</h3>
-                <table class="pdf-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Heart Rate</td>
-                            <td>72 bpm</td>
-                            <td style="color:var(--success);">Normal</td>
-                        </tr>
-                        <tr>
-                            <td>Oxygen Level</td>
-                            <td>98%</td>
-                            <td style="color:var(--success);">Optimal</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h3>Health Recommendations</h3>
-                <ul style="margin-left:20px; margin-bottom:20px;">
-                    <li>Continue current medication regimen</li>
-                    <li>Follow up with cardiologist in 3 months</li>
-                    <li>Maintain healthy lifestyle habits</li>
-                </ul>
-                
-                <div class="pdf-footer">
-                    Page 2 of 2 | Generated by HealthAI Patient Monitoring System
-                </div>
+            <h3>Patient Summary</h3>
+            <p><strong>Name:</strong> <span class="input-field">__________</span></p>
+            <p><strong>ID Number:</strong> <span class="input-field">__________</span></p>
+            
+            <h3>Heart Rate History</h3>
+            <div class="pdf-graph">
+                Heart Rate Chart
+            </div>
+            
+            <h3>Oxygen Level History</h3>
+            <div class="pdf-graph">
+                Oxygen Level Chart
+            </div>
+            
+            <div class="pdf-footer">
+                Page 1 of 2
+            </div>
+        </div>
+        
+        <div class="pdf-page">
+            <div class="pdf-header">
+                <h1>Health Patient Report</h1>
+                <p>Page 2: Detailed Analysis</p>
+            </div>
+            
+            <!-- Added real-time monitoring chart here -->
+            <h3>Real-time Monitoring</h3>
+            <div class="pdf-graph">
+                Real-time Monitoring Chart
+            </div>
+            
+            <h3>Vital Signs Summary</h3>
+            <table class="pdf-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Heart Rate</td>
+                        <td>72 bpm</td>
+                        <td style="color:var(--success);">Normal</td>
+                    </tr>
+                    <tr>
+                        <td>Oxygen Level</td>
+                        <td>98%</td>
+                        <td style="color:var(--success);">Optimal</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Health Recommendations</h3>
+            <ul style="margin-left:20px; margin-bottom:20px;">
+                <li>Continue current medication regimen</li>
+                <li>Follow up with cardiologist in 3 months</li>
+                <li>Maintain healthy lifestyle habits</li>
+            </ul>
+            
+            <div class="pdf-footer">
+                Page 2 of 2 | Generated by HealthAI Patient Monitoring System
             </div>
         </div>
     </div>
-
+</div>
     <script>
         // Global chart instances
         let heartRateChartInstance, oxygenChartInstance, realtimeChartInstance;
-        let streamURL = "http://192.168.115.77";
         
         // Initialize Charts
         function initCharts() {
@@ -1499,6 +1411,7 @@
             document.getElementById('logoutBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 alert('Logging out... Redirecting to login page.');
+		window.location.href = 'login.html'; // Redirect to login page
             });
             
             // Simulate real-time data changes
@@ -1530,7 +1443,7 @@
                 const url = streamUrlInput.value.trim();
                 if (url) {
                     streamURL = url;
-                    alert(`Stream URL set to: ${http://192.168.115.77}`);
+                    alert(`Stream URL set to: ${url}`);
                 } else {
                     alert('Please enter a valid stream URL');
                 }
@@ -1538,7 +1451,7 @@
             
             // Start camera stream
             startCameraBtn.addEventListener('click', function() {
-                if (!streamURL || streamURL === "http://192.168.115.77") {
+                if (!streamURL || streamURL === "http://192.168.115.77/stream") {
                     alert('Please set a valid stream URL first');
                     return;
                 }
@@ -1568,19 +1481,6 @@
                 
                 // In a real implementation, you would capture the image here
                 alert('Image captured successfully! Analysis in progress...');
-                
-                // Simulate AI analysis
-                setTimeout(() => {
-                    const heartRate = Math.floor(Math.random() * 20) + 70;
-                    const oxygenLevel = Math.floor(Math.random() * 5) + 95;
-                    
-                    alert(`Analysis complete!\nHeart Rate: ${heartRate} bpm\nOxygen Level: ${oxygenLevel}%`);
-                    
-                    // Update vitals display
-                    document.querySelectorAll('.vital-value')[0].textContent = heartRate;
-                    document.querySelectorAll('.vital-value')[1].textContent = oxygenLevel;
-                }, 2000);
-            });
             
             // Preview report functionality
             previewReportBtn.addEventListener('click', function() {
@@ -1653,7 +1553,9 @@
                 doc.setFontSize(16);
                 doc.setTextColor(0);
                 doc.text('Real-time Monitoring', 20, 45);
-                doc.addImage(realtimeImage, 'JPEG', 20, 50, 170, 80);
+                doc.setDrawColor(52, 152, 219);
+                doc.line(20, 35, 190, 35);
+
                 
                 // Add vital signs summary (only heart rate and oxygen level)
                 doc.setFontSize(16);

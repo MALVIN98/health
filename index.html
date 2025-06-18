@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health - Patient Monitoring System</title>
+    <title>HealthAI - Patient Monitoring System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -754,7 +754,7 @@
         <div class="header">
             <div class="logo">
                 <i class="fas fa-heartbeat"></i>
-                <h1>Health Monitoring</h1>
+                <h1>HealthAI</h1>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <i class="fas fa-bars"></i>
@@ -765,7 +765,7 @@
         <div class="sidebar" id="sidebar">
             <div class="logo" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <i class="fas fa-heartbeat"></i>
-                <h1>Health Monitoring</h1>
+                <h1>HealthAI</h1>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
@@ -979,8 +979,6 @@
                             <div class="video-placeholder">
                                 <i class="fas fa-video"></i> AI Camera Feed
                             </div>
-		            <img id="cameraStream" style="display:none; width:100%; height:100%; object-fit:cover;">
-                        </div>
                         </div>
                         <div class="controls">
                             <button class="btn btn-primary" id="startCameraBtn">
@@ -1157,7 +1155,7 @@
     </div>
     
     <div class="footer">
-        <p>HealthAI Patient Monitoring System © UniMAP IDP | All rights reserved</p>
+        <p>HealthAI Patient Monitoring System © 2023 | All rights reserved</p>
     </div>
 
    <!-- Updated PDF Preview Modal -->
@@ -1168,7 +1166,7 @@
         
         <div class="pdf-page">
             <div class="pdf-header">
-                <h1>Health Patient Report</h1>
+                <h1>HealthAI Patient Report</h1>
                 <p>Generated on: <span id="reportDate"></span></p>
             </div>
             
@@ -1193,7 +1191,7 @@
         
         <div class="pdf-page">
             <div class="pdf-header">
-                <h1>Health Patient Report</h1>
+                <h1>HealthAI Patient Report</h1>
                 <p>Page 2: Detailed Analysis</p>
             </div>
             
@@ -1429,58 +1427,31 @@
             
             // Camera controls
             const startCameraBtn = document.getElementById('startCameraBtn');
-            const stopCameraBtn = document.getElementById('stopCameraBtn');
             const captureBtn = document.getElementById('captureBtn');
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
-            const setStreamBtn = document.getElementById('setStreamBtn');
-            const streamUrlInput = document.getElementById('streamUrlInput');
-            const cameraStream = document.getElementById('cameraStream');
-            const videoPlaceholder = document.getElementById('videoPlaceholder');
             
-            // Set stream URL button
-            setStreamBtn.addEventListener('click', function() {
-                const url = streamUrlInput.value.trim();
-                if (url) {
-                    streamURL = url;
-                    alert(`Stream URL set to: ${url}`);
-                } else {
-                    alert('Please enter a valid stream URL');
-                }
-            });
+            let cameraActive = false;
             
-            // Start camera stream
             startCameraBtn.addEventListener('click', function() {
-                if (!streamURL || streamURL === "http://192.168.115.77/stream") {
-                    alert('Please set a valid stream URL first');
-                    return;
+                cameraActive = !cameraActive;
+                if (cameraActive) {
+                    this.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-danger');
+                    captureBtn.disabled = false;
+                } else {
+                    this.innerHTML = '<i class="fas fa-play"></i> Start Camera';
+                    this.classList.remove('btn-danger');
+                    this.classList.add('btn-primary');
+                    captureBtn.disabled = true;
                 }
-                
-                cameraStream.src = streamURL;
-                cameraStream.style.display = 'block';
-                videoPlaceholder.style.display = 'none';
-                
-                alert('Starting camera stream...');
             });
             
-            // Stop camera stream
-            stopCameraBtn.addEventListener('click', function() {
-                cameraStream.src = '';
-                cameraStream.style.display = 'none';
-                videoPlaceholder.style.display = 'flex';
-                
-                alert('Camera stream stopped');
-            });
-            
-            // Capture image
             captureBtn.addEventListener('click', function() {
-                if (cameraStream.style.display === 'none') {
-                    alert('Please start the camera first');
-                    return;
-                }
-                
-                // In a real implementation, you would capture the image here
+                if (!cameraActive) return;
                 alert('Image captured successfully! Analysis in progress...');
+            });
             
             // Preview report functionality
             previewReportBtn.addEventListener('click', function() {

@@ -925,7 +925,7 @@
                         <div class="vital-icon vital-oxygen">
                             <i class="fas fa-lungs"></i>
                         </div>
-                        <div class="vital-value" id="currentOxygen">98</div>
+                        <div class="vital-value" id="currentOxygen">98%</div>
                         <div class="vital-label">Oxygen Level (%)</div>
                         <div class="vital-status status-normal">Optimal</div>
                     </div>
@@ -1439,13 +1439,13 @@ const analytics = getAnalytics(app);
             });
             
             // Simulate real-time data changes
-            setInterval(() => {
-                const heartValue = document.getElementById('currentHeartRate');
+           /setInterval(() => {
+               const heartValue = document.getElementById('currentHeartRate');
                 const oxygenValue = document.getElementById('currentOxygen');
                 
                 // Generate random values within normal ranges
-                const newHeart = Math.floor(Math.random() * 10) + 70;
-                const newOxygen = Math.floor(Math.random() * 3) + 96;
+                //const newHeart = Math.floor(Math.random() * 10) + 70;
+                //const newOxygen = Math.floor(Math.random() * 3) + 96;
                 
                 heartValue.textContent = newHeart;
                 oxygenValue.textContent = newOxygen;

@@ -407,28 +407,6 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-  // ✅ Your Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyAzKOK6x25R0RMfV7y-2hocNMd2rvrC2J0",
-    authDomain: "health-monitoring-6c5d5.firebaseapp.com",
-    databaseURL: "https://health-monitoring-6c5d5-default-rtdb.firebaseio.com",
-    projectId: "health-monitoring-6c5d5",
-    storageBucket: "health-monitoring-6c5d5.firebasestorage.app",
-    messagingSenderId: "85960821209",
-    appId: "1:85960821209:web:9c8ff588b7da44c57af1c8",
-    measurementId: "G-SVNQTRBWWS"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Attach db to window so jQuery script can access it
-  window.firebaseDB = db;
-  </script>
     <script>
         $(document).ready(function() {
             // Current page state
@@ -617,17 +595,6 @@
                 if (isValid) {
                     // Simulate registration
                     console.log('Registration with:', fullName, regEmail);
-                      const emailKey = regEmail.replace(/[.#$[\]]/g, "_");
-                      const userRef = ref(firebaseDB, "users/" + emailKey);
-                      set(userRef, {
-                        name: fullName,
-                        email: regEmail,
-                        registeredAt: new Date().toISOString()
-                      }).then(() => {
-                        showPage('confirmationPage');
-                      }).catch((error) => {
-                        alert("Registration failed: " + error.message);
-                      });
                     
                     // Show confirmation page
                     showPage('confirmationPage');

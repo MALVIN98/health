@@ -571,17 +571,7 @@
                     console.log('Login attempt with:', email, password);
                     
                     // Redirect to the main app
-                   const emailKey = email.replace(/[.#$[\]]/g, "_");
-                   const userRef = ref(firebaseDB, "users/" + emailKey);
-                    update(userRef, {
-                      lastLogin: new Date().toISOString()
-                    }).then(() => {
-                      window.location.href = 'index.html?user=' + encodeURIComponent(emailKey);
-                    }).catch((error) => {
-                      alert("Login failed: " + error.message);
-                    });
-                                    
-
+                   window.location.href = 'index.html';
             
             // Registration form validation
             $('#registerForm').on('submit', function(e) {

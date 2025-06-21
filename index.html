@@ -3,1596 +3,665 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Monitoring System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Health Monitoring System - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary: #3498db;
-            --secondary: #2c3e50;
-            --accent: #e74c3c;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --light: #ecf0f1;
-            --dark: #34495e;
-            --card-bg: #ffffff;
-            --sidebar-bg: #2c3e50;
-            --text-light: #ecf0f1;
-            --text-dark: #2c3e50;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --primary-color: #87CEEB;
+            --secondary-color: #5F9EA0;
+            --accent-color: #4682B4;
+            --light-color: #E0F7FA;
+            --dark-color: #2C3E50;
+            --danger-color: #E74C3C;
+            --success-color: #2ECC71;
+            --warning-color: #F39C12;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
-            color: var(--text-dark);
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
+            background-image: linear-gradient(to bottom right, var(--primary-color), var(--light-color));
         }
-
+        
         .container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(to right, var(--secondary), var(--dark));
-            color: var(--text-light);
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .logo i {
-            font-size: 1.8rem;
-            color: var(--success);
-        }
-
-        .mobile-menu-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-light);
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: block;
-        }
-
-        /* Sidebar Navigation */
-        .sidebar {
-            background: var(--sidebar-bg);
-            color: var(--text-light);
-            width: 280px;
-            height: calc(100vh - 60px);
-            position: fixed;
-            top: 60px;
-            left: -280px;
-            transition: var(--transition);
-            z-index: 99;
-            overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .nav-menu {
-            list-style: none;
-            padding: 1.5rem 0;
-        }
-
-        .nav-item {
-            margin-bottom: 5px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 15px 25px;
-            color: var(--text-light);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 1.1rem;
-            gap: 15px;
-        }
-
-        .nav-link i {
-            width: 25px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            padding: 40px;
             text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-
-        .nav-link:hover, .nav-link.active {
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid var(--primary);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 1.5rem;
-            transition: var(--transition);
-        }
-
-        .page-section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .page-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Dashboard Styles */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            min-height: 200px;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .heart-icon {
-            background: linear-gradient(135deg, var(--accent), #c0392b);
-        }
-
-        .oxygen-icon {
-            background: linear-gradient(135deg, var(--primary), #2980b9);
-        }
-
-        .medicine-icon {
-            background: linear-gradient(135deg, var(--warning), #e67e22);
-        }
-
-        .card-value {
+        
+        .logo {
+            color: var(--accent-color);
             font-size: 2.5rem;
-            font-weight: 700;
-            margin: 10px 0;
+            margin-bottom: 20px;
         }
-
-        .card-title {
-            font-size: 1.1rem;
-            color: var(--dark);
-            font-weight: 600;
-        }
-
-        .card-footer {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-top: auto;
-        }
-
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        
+        h1 {
+            color: var(--dark-color);
             margin-bottom: 30px;
-        }
-
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-title {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: var(--dark);
             font-weight: 600;
+            font-size: 1.8rem;
         }
-
-        .chart-container {
-            height: 250px;
-            width: 100%;
+        
+        .subtitle {
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
         }
-
-        .alerts-section {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-
-        .alerts-title {
-            font-size: 1.3rem;
+        
+        .input-group {
             margin-bottom: 20px;
-            color: var(--dark);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            text-align: left;
+            position: relative;
         }
-
-        .alert-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .alert-item:last-child {
-            border-bottom: none;
-        }
-
-        .alert-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .alert-medicine {
-            background-color: var(--primary);
-        }
-
-        .alert-heart {
-            background-color: var(--accent);
-        }
-
-        .alert-oxygen {
-            background-color: var(--warning);
-        }
-
-        .alert-content h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .alert-content p {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .alert-time {
-            margin-left: auto;
-            font-size: 0.9rem;
-            color: var(--dark);
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-color);
             font-weight: 500;
         }
-
-        /* Camera Page */
-        .camera-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .camera-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .video-container {
-            position: relative;
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .video-placeholder {
+        
+        input {
             width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #1a1a1a;
-            color: white;
-            font-size: 1.2rem;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
         }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+        
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.2);
         }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            transform: translateY(-50%);
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
+            color: var(--secondary-color);
         }
-
-        .btn-primary {
-            background: linear-gradient(to right, var(--primary), #2980b9);
+        
+        .btn {
+            background-color: var(--primary-color);
             color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
         }
-
-        .btn-success {
-            background: linear-gradient(to right, var(--success), #27ae60);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(to right, var(--warning), #e67e22);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(to right, #e74c3c, #c0392b);
-            color: white;
-        }
-
+        
         .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        .vitals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
         }
-
-        .vital-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            text-align: center;
+        
+        .btn-secondary:hover {
+            background-color: var(--accent-color);
         }
-
-        .vital-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 1.8rem;
-            color: white;
+        
+        .btn-warning {
+            background-color: var(--warning-color);
         }
-
-        .vital-heart {
-            background: linear-gradient(135deg, var(--accent), #c0392b);
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
         }
-
-        .vital-oxygen {
-            background: linear-gradient(135deg, var(--primary), #2980b9);
+        
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--dark-color);
         }
-
-        .vital-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+        
+        .links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
         }
-
-        .vital-label {
-            font-size: 1.1rem;
-            color: var(--dark);
-            margin-bottom: 15px;
+        
+        .links a:hover {
+            text-decoration: underline;
         }
-
-        .vital-status {
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
+        
+        .error {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
         }
-
-        .status-normal {
-            background: rgba(46, 204, 113, 0.2);
-            color: var(--success);
+        
+        .success {
+            color: var(--success-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
         }
-
-        .status-warning {
-            background: rgba(243, 156, 18, 0.2);
-            color: var(--warning);
+        
+        .form-container {
+            transition: all 0.3s ease;
         }
-
-        /* Medication Page */
-        .medication-header {
-            text-align: center;
-            margin-bottom: 30px;
+        
+        .form-page {
+            display: none;
         }
-
-        .medication-header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--secondary);
-        }
-
-        .medication-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .medication-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .medication-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .medication-header-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .medication-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        .risk-level {
-            padding: 6px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: white;
-        }
-
-        .risk-low {
-            background: var(--success);
-        }
-
-        .risk-medium {
-            background: var(--warning);
-        }
-
-        .risk-high {
-            background: var(--accent);
-        }
-
-        .medication-detail {
-            margin-bottom: 15px;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
-            font-size: 1rem;
-        }
-
-        .disclaimer {
-            text-align: center;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            font-size: 0.95rem;
-            color: #7f8c8d;
-        }
-
-        .disclaimer i {
-            color: var(--warning);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
+        
+        .form-page.active {
             display: block;
         }
-
-        .section-title {
-            font-size: 1.5rem;
-            margin: 30px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
-            color: var(--secondary);
-        }
-
-        /* Responsive Adjustments */
-        @media (min-width: 768px) {
-            .container {
-                flex-direction: row;
-            }
-            
-            .header {
-                display: none;
-            }
-            
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100vh;
-                width: 280px;
-            }
-            
-            .main-content {
-                margin-left: 280px;
-                padding: 2rem;
-            }
-            
-            .mobile-menu-btn {
-                display: none;
-            }
-            
-            .camera-grid {
-                grid-template-columns: 2fr 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .chart-container {
-                height: 200px;
-            }
-        }
-
-        /* Animation for vital signs */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .vital-heart .vital-value {
-            animation: pulse 1s infinite;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            background: var(--card-bg);
-            border-top: 1px solid #eee;
-        }
-
-        /* PDF Preview Modal */
-        .pdf-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+        
+        .step-indicator {
+            display: flex;
             justify-content: center;
-            align-items: center;
+            margin-bottom: 25px;
         }
         
-        .pdf-preview {
-            background: white;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 800px;
-            height: 90%;
-            overflow-y: auto;
-            padding: 20px;
-            position: relative;
-        }
-        
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
+        .step {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            font-size: 16px;
+            background-color: #ddd;
+            margin: 0 5px;
+        }
+        
+        .step.active {
+            background-color: var(--accent-color);
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 1.2rem;
             cursor: pointer;
         }
         
-        .pdf-page {
-            width: 100%;
-            background: white;
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            border-radius: 3px;
+            background-color: #eee;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s;
+        }
+        
+        .strength-weak { background-color: var(--danger-color); width: 25%; }
+        .strength-medium { background-color: var(--warning-color); width: 50%; }
+        .strength-strong { background-color: var(--success-color); width: 75%; }
+        .strength-very-strong { background-color: var(--success-color); width: 100%; }
+        
+        .password-info {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+        
+        .confirmation-message {
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border: 1px solid #ddd;
-        }
-        
-        .pdf-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 10px;
-        }
-        
-        .pdf-header h1 {
-            color: var(--secondary);
-            margin-bottom: 5px;
-        }
-        
-        .pdf-graph {
-            width: 100%;
-            height: 200px;
-            background: #f8f9fa;
-            margin: 15px 0;
-            border: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-        }
-        
-        .pdf-table {
-            width: 100%;
-            border-collapse: collapse;
+            background-color: #f8f9fa;
+            border-radius: 10px;
             margin-top: 20px;
         }
         
-        .pdf-table th {
-            background: var(--primary);
-            color: white;
-            padding: 10px;
-            text-align: left;
-        }
-        
-        .pdf-table td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .pdf-table tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-        
-        .pdf-footer {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 10px;
-            color: #777;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-        }
-        
-        .input-field {
-            border: 1px dashed #ccc;
-            padding: 5px;
-            margin: 5px 0;
-            min-width: 150px;
-            display: inline-block;
+        .confirmation-message i {
+            font-size: 3rem;
+            color: var(--success-color);
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Mobile Header -->
-        <div class="header">
-            <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                <h1>Health Monitoring</h1>
-            </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
+        <!-- Back button for navigation -->
+        <button class="back-btn" id="backButton" style="display: none;">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <!-- Logo -->
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
         </div>
         
-        <!-- Sidebar Navigation -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <i class="fas fa-heartbeat"></i>
-                <h1>Health Monitoring</h1>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active" data-section="dashboard">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-section="monitoring">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>Monitoring</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-section="camera">
-                        <i class="fas fa-video"></i>
-                        <span>Camera</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-section="medication">
-                        <i class="fas fa-pills"></i>
-                        <span>Medication</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="login.html" class="nav-link" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <!-- Dashboard Section -->
-            <div class="page-section active" id="dashboard-section">
-                <h1 class="section-title">Health Dashboard</h1>
+        <div class="form-container">
+            <!-- Login Form -->
+            <div class="form-page active" id="loginPage">
+                <h1>Health Monitoring System</h1>
+                <p class="subtitle">Sign in to access your health dashboard</p>
                 
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Heart Rate</div>
-                                <div class="card-value">72</div>
-                            </div>
-                            <div class="card-icon heart-icon">
-                                <i class="fas fa-heartbeat"></i>
-                            </div>
-                        </div>
-                        <div class="card-footer">bpm • Normal</div>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                        <div id="emailError" class="error">Please enter a valid email</div>
                     </div>
                     
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Oxygen Level</div>
-                                <div class="card-value">98%</div>
-                            </div>
-                            <div class="card-icon oxygen-icon">
-                                <i class="fas fa-lungs"></i>
-                            </div>
-                        </div>
-                        <div class="card-footer">SpO2 • Optimal</div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <div id="passwordError" class="error">Password must be at least 6 characters</div>
                     </div>
                     
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Next Medication</div>
-                                <div class="card-value">2:30 PM</div>
-                            </div>
-                            <div class="card-icon medicine-icon">
-                                <i class="fas fa-pills"></i>
-                            </div>
-                        </div>
-                        <div class="card-footer">Metformin • 500mg</div>
-                    </div>
-                </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
                 
-                <div class="charts-container">
-                    <div class="chart-card">
-                        <div class="chart-title">Heart Rate History</div>
-                        <div class="chart-container">
-                            <canvas id="heartRateChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-card">
-                        <div class="chart-title">Oxygen Level History</div>
-                        <div class="chart-container">
-                            <canvas id="oxygenChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="alerts-section">
-                    <div class="alerts-title">
-                        <i class="fas fa-bell"></i>
-                        Medication Alerts
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-medicine">
-                            <i class="fas fa-pills"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Metformin</h4>
-                            <p>500mg - After Lunch</p>
-                        </div>
-                        <div class="alert-time">In 1 hour 15 min</div>
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-heart">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Heart Rate Alert</h4>
-                            <p>Rate exceeded 100 bpm</p>
-                        </div>
-                        <div class="alert-time">Today, 10:30 AM</div>
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-oxygen">
-                            <i class="fas fa-lungs"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Oxygen Level</h4>
-                            <p>Oxygen level below 94%</p>
-                        </div>
-                        <div class="alert-time">Yesterday, 11:20 PM</div>
-                    </div>
+                <div class="links">
+                    <a href="#" id="forgotPassword">Forgot password?</a> | 
+                    <a href="#" id="register">Register new account</a>
                 </div>
             </div>
             
-            <!-- Monitoring Section -->
-            <div class="page-section" id="monitoring-section">
-                <h1 class="section-title">Health Monitoring</h1>
+            <!-- Registration Form -->
+            <div class="form-page" id="registerPage">
+                <h1>Create Account</h1>
+                <p class="subtitle">Join our health monitoring community</p>
                 
-                <div class="dashboard-grid">
-                    <div class="vital-card">
-                        <div class="vital-icon vital-heart">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="vital-value" id="currentHeartRate">72</div>
-                        <div class="vital-label">Heart Rate (BPM)</div>
-                        <div class="vital-status status-normal">Normal</div>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+                        <div id="nameError" class="error">Please enter your name</div>
                     </div>
                     
-                    <div class="vital-card">
-                        <div class="vital-icon vital-oxygen">
-                            <i class="fas fa-lungs"></i>
-                        </div>
-                        <div class="vital-value" id="currentOxygen">98%</div>
-                        <div class="vital-label">Oxygen Level (%)</div>
-                        <div class="vital-status status-normal">Optimal</div>
+                    <div class="input-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" placeholder="Enter your email" required>
+                        <div id="regEmailError" class="error">Please enter a valid email</div>
                     </div>
+                    
+                    <div class="input-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Create a password" required>
+                        <i class="fas fa-eye password-toggle" id="regPasswordToggle"></i>
+                        <div class="password-strength">
+                            <div class="strength-meter" id="passwordStrength"></div>
+                        </div>
+                        <div class="password-info">Use 8+ characters with a mix of letters, numbers & symbols</div>
+                        <div id="regPasswordError" class="error">Password must be at least 8 characters</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                        <i class="fas fa-eye password-toggle" id="confirmPasswordToggle"></i>
+                        <div id="confirmPasswordError" class="error">Passwords do not match</div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Create Account</button>
+                </form>
+                
+                <div class="links">
+                    Already have an account? <a href="#" id="loginLink">Sign in</a>
+                </div>
+            </div>
+            
+            <!-- Forgot Password Form -->
+            <div class="form-page" id="forgotPage">
+                <h1>Reset Password</h1>
+                <p class="subtitle">Enter your email to reset your password</p>
+                
+                <form id="forgotForm">
+                    <div class="input-group">
+                        <label for="forgotEmail">Email</label>
+                        <input type="email" id="forgotEmail" placeholder="Enter your email" required>
+                        <div id="forgotEmailError" class="error">Please enter a valid email</div>
+                        <div id="forgotEmailSuccess" class="success">Reset link has been sent to your email</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">Send Reset Link</button>
+                </form>
+                
+                <div class="links">
+                    Remember your password? <a href="#" id="loginLink2">Sign in</a>
+                </div>
+            </div>
+            
+            <!-- Reset Password Form -->
+            <div class="form-page" id="resetPage">
+                <h1>Create New Password</h1>
+                <p class="subtitle">Enter and confirm your new password</p>
+                
+                <div class="step-indicator">
+                    <div class="step active"></div>
+                    <div class="step active"></div>
                 </div>
                 
-                <div class="chart-card">
-                    <div class="chart-title">Real-time Monitoring</div>
-                    <div class="chart-container">
-                        <canvas id="realtimeChart"></canvas>
+                <form id="resetForm">
+                    <div class="input-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" placeholder="Create a new password" required>
+                        <i class="fas fa-eye password-toggle" id="newPasswordToggle"></i>
+                        <div class="password-strength">
+                            <div class="strength-meter" id="newPasswordStrength"></div>
+                        </div>
+                        <div class="password-info">Use 8+ characters with a mix of letters, numbers & symbols</div>
+                        <div id="newPasswordError" class="error">Password must be at least 8 characters</div>
                     </div>
+                    
+                    <div class="input-group">
+                        <label for="confirmNewPassword">Confirm Password</label>
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm your new password" required>
+                        <i class="fas fa-eye password-toggle" id="confirmNewPasswordToggle"></i>
+                        <div id="confirmNewPasswordError" class="error">Passwords do not match</div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Reset Password</button>
+                </form>
+                
+                <div class="links">
+                    Remember your password? <a href="#" id="loginLink3">Sign in</a>
+                </div>
+            </div>
+            
+            <!-- Confirmation Message -->
+            <div class="form-page" id="confirmationPage">
+                <i class="fas fa-check-circle"></i>
+                <h1>Account Created!</h1>
+                <p class="subtitle">Your account has been successfully created</p>
+                
+                <div class="confirmation-message">
+                    <p>Welcome to Health Monitoring System! You can now log in to access your personalized health dashboard.</p>
                 </div>
                 
-                <div class="alerts-section">
-                    <div class="alerts-title">
-                        <i class="fas fa-history"></i>
-                        Recent Health Events
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-heart">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Heart Rate Increase</h4>
-                            <p>Increased to 105 bpm for 2 minutes</p>
-                        </div>
-                        <div class="alert-time">Today, 11:45 AM</div>
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-oxygen">
-                            <i class="fas fa-lungs"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Oxygen Fluctuation</h4>
-                            <p>Dropped to 93% for 1 minute</p>
-                        </div>
-                        <div class="alert-time">Today, 10:15 AM</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Camera Section -->
-            <div class="page-section" id="camera-section">
-                <h1 class="section-title">Health Camera</h1>
-                
-                <div class="camera-grid">
-                    <div class="camera-card">
-                        <div class="chart-title">
-                            <i class="fas fa-video"></i> Camera Feed
-                        </div>
-                        <div class="video-container">
-                            <div class="video-placeholder">
-                                <i class="fas fa-video"></i> AI Camera Feed
-                            </div>
-                        </div>
-                        <div class="controls">
-                            <button class="btn btn-primary" id="startCameraBtn">
-                                <i class="fas fa-play"></i> Start Camera
-                            </button>
-                            <button class="btn btn-success" id="captureBtn">
-                                <i class="fas fa-camera"></i> Capture
-                            </button>
-                            <button class="btn btn-warning" id="downloadReportBtn">
-                                <i class="fas fa-download"></i> Download Report
-                            </button>
-                            <button class="btn btn-danger" id="previewReportBtn">
-                                <i class="fas fa-eye"></i> Preview Report
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="vitals-grid">
-                        <div class="vital-card">
-                            <div class="vital-icon vital-heart">
-                                <i class="fas fa-heartbeat"></i>
-                            </div>
-                            <div class="vital-value">76</div>
-                            <div class="vital-label">Heart Rate (BPM)</div>
-                            <div class="vital-status status-normal">Normal</div>
-                        </div>
-                        
-                        <div class="vital-card">
-                            <div class="vital-icon vital-oxygen">
-                                <i class="fas fa-lungs"></i>
-                            </div>
-                            <div class="vital-value">97</div>
-                            <div class="vital-label">Oxygen Level (%)</div>
-                            <div class="vital-status status-normal">Optimal</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Medication Section -->
-            <div class="page-section" id="medication-section">
-                <div class="medication-header">
-                    <h1>Medication Management</h1>
-                    <p>Cardiac and Respiratory Medications Guide</p>
-                </div>
-                
-                <h2 class="section-title">Heart Medications</h2>
-                <div class="medication-grid">
-                    <div class="medication-card">
-                        <div class="medication-header-card">
-                            <div class="medication-name">Beta Blockers</div>
-                            <div class="risk-level risk-medium">Medium Risk</div>
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Common Names:</div>
-                            Metoprolol, Atenolol, Propranolol
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Purpose:</div>
-                            Reduce blood pressure, manage arrhythmias
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Dosage:</div>
-                            25-200mg/day depending on condition
-                        </div>
-                    </div>
-                    
-                    <div class="medication-card">
-                        <div class="medication-header-card">
-                            <div class="medication-name">ACE Inhibitors</div>
-                            <div class="risk-level risk-low">Low Risk</div>
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Common Names:</div>
-                            Lisinopril, Enalapril, Ramipril
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Purpose:</div>
-                            Treat hypertension and heart failure
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Dosage:</div>
-                            5-40mg/day depending on condition
-                        </div>
-                    </div>
-                    
-                    <div class="medication-card">
-                        <div class="medication-header-card">
-                            <div class="medication-name">Diuretics</div>
-                            <div class="risk-level risk-medium">Medium Risk</div>
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Common Names:</div>
-                            Furosemide, Hydrochlorothiazide
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Purpose:</div>
-                            Reduce fluid retention and blood pressure
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Dosage:</div>
-                            20-80mg/day depending on severity
-                        </div>
-                    </div>
-                </div>
-                
-                <h2 class="section-title">Oxygen-Related Medications</h2>
-                <div class="medication-grid">
-                    <div class="medication-card">
-                        <div class="medication-header-card">
-                            <div class="medication-name">Bronchodilators</div>
-                            <div class="risk-level risk-low">Low Risk</div>
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Common Names:</div>
-                            Albuterol, Salbutamol, Ipratropium
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Purpose:</div>
-                            Improve airflow in lungs
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Dosage:</div>
-                            1-2 puffs every 4-6 hours as needed
-                        </div>
-                    </div>
-                    
-                    <div class="medication-card">
-                        <div class="medication-header-card">
-                            <div class="medication-name">Corticosteroids</div>
-                            <div class="risk-level risk-medium">Medium Risk</div>
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Common Names:</div>
-                            Prednisone, Budesonide, Fluticasone
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Purpose:</div>
-                            Reduce lung inflammation
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Dosage:</div>
-                            5-60mg/day depending on severity
-                        </div>
-                    </div>
-                    
-                    <div class="medication-card">
-                        <div class="medication-header-card">
-                            <div class="medication-name">Anticoagulants</div>
-                            <div class="risk-level risk-high">High Risk</div>
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Common Names:</div>
-                            Warfarin, Rivaroxaban, Apixaban
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Purpose:</div>
-                            Prevent blood clots in lung conditions
-                        </div>
-                        <div class="medication-detail">
-                            <div class="detail-label">Dosage:</div>
-                            Strictly weight-dependent, requires monitoring
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="disclaimer">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Important: Medication should only be taken under medical supervision. 
-                    Risk levels are general guidelines and may vary by individual patient circumstances.
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="footer">
-      		  <p>Health Monitoring System © UniMAP IDP 2025 | All rights reserved</p>
-    </div>
-
-   <!-- Updated PDF Preview Modal -->
-<div class="pdf-modal" id="pdfModal">
-    <div class="pdf-preview">
-        <button class="close-btn" id="closePdfBtn">&times;</button>
-        <h2 style="text-align:center; margin-bottom:20px; color:var(--secondary);">Health Report Preview</h2>
-        
-        <div class="pdf-page">
-            <div class="pdf-header">
-                <h1>Health Patient Report</h1>
-                <p>Generated on: <span id="reportDate"></span></p>
-            </div>
-            
-            <h3>Patient Summary</h3>
-            <p><strong>Name:</strong> <span class="input-field">__________</span></p>
-            <p><strong>ID Number:</strong> <span class="input-field">__________</span></p>
-            
-            <h3>Heart Rate History</h3>
-            <div class="pdf-graph">
-                Heart Rate Chart
-            </div>
-            
-            <h3>Oxygen Level History</h3>
-            <div class="pdf-graph">
-                Oxygen Level Chart
-            </div>
-            
-            <div class="pdf-footer">
-                Page 1 of 2
-            </div>
-        </div>
-        
-        <div class="pdf-page">
-            <div class="pdf-header">
-                <h1>HealthAI Patient Report</h1>
-                <p>Page 2: Detailed Analysis</p>
-            </div>
-            
-            <!-- Added real-time monitoring chart here -->
-            <h3>Real-time Monitoring</h3>
-            <div class="pdf-graph">
-                Real-time Monitoring Chart
-            </div>
-            
-            <h3>Vital Signs Summary</h3>
-            <table class="pdf-table">
-                <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Heart Rate</td>
-                        <td>72 bpm</td>
-                        <td style="color:var(--success);">Normal</td>
-                    </tr>
-                    <tr>
-                        <td>Oxygen Level</td>
-                        <td>98%</td>
-                        <td style="color:var(--success);">Optimal</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <h3>Health Recommendations</h3>
-            <ul style="margin-left:20px; margin-bottom:20px;">
-                <li>Continue current medication regimen</li>
-                <li>Follow up with cardiologist in 3 months</li>
-                <li>Maintain healthy lifestyle habits</li>
-            </ul>
-            
-            <div class="pdf-footer">
-                Page 2 of 2 | Generated by HealthAI Patient Monitoring System
+                <button class="btn" id="goToLogin">Go to Login</button>
             </div>
         </div>
     </div>
-</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
-        // Global chart instances
-        let heartRateChartInstance, oxygenChartInstance, realtimeChartInstance;
-        
-        // Initialize Charts
-        function initCharts() {
-            // Heart Rate Chart
-            const heartCtx = document.getElementById('heartRateChart').getContext('2d');
-            heartRateChartInstance = new Chart(heartCtx, {
-                type: 'line',
-                data: {
-                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
-                    datasets: [{
-                        label: 'Heart Rate (bpm)',
-                        data: [72, 75, 78, 76, 80, 75],
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 60,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
+        $(document).ready(function() {
+            // Current page state
+            let currentPage = 'login';
             
-            // Oxygen Level Chart
-            const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
-            oxygenChartInstance = new Chart(oxygenCtx, {
-                type: 'line',
-                data: {
-                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
-                    datasets: [{
-                        label: 'Oxygen Level (%)',
-                        data: [98, 97, 98, 96, 97, 98],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 90,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Real-time Chart
-            const realtimeCtx = document.getElementById('realtimeChart').getContext('2d');
-            realtimeChartInstance = new Chart(realtimeCtx, {
-                type: 'line',
-                data: {
-                    labels: ['', '', '', '', '', '', '', '', '', ''],
-                    datasets: [
-                        {
-                            label: 'Heart Rate',
-                            data: [72, 74, 73, 75, 76, 74, 73, 72, 74, 75],
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        },
-                        {
-                            label: 'Oxygen Level',
-                            data: [98, 97, 98, 97, 96, 97, 98, 97, 96, 97],
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Navigation System
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize charts
-            initCharts();
-            
-            // Set report date
-            document.getElementById('reportDate').textContent = new Date().toLocaleDateString();
-            
-            // Mobile menu toggle
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('sidebar');
-            
-            mobileMenuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-            
-            // Navigation links
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pageSections = document.querySelectorAll('.page-section');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.id === 'logoutBtn') return;
-                    
-                    e.preventDefault();
-                    
-                    // Remove active class from all links
-                    navLinks.forEach(navLink => navLink.classList.remove('active'));
-                    
-                    // Add active class to clicked link
-                    this.classList.add('active');
-                    
-                    // Get target section
-                    const targetSection = this.getAttribute('data-section');
-                    
-                    // Hide all sections
-                    pageSections.forEach(section => section.classList.remove('active'));
-                    
-                    // Show target section
-                    document.getElementById(`${targetSection}-section`).classList.add('active');
-                    
-                    // Close mobile menu
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.remove('active');
-                    }
-                });
-            });
-            
-            // Logout functionality
-            document.getElementById('logoutBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Logging out... Redirecting to login page.');
-		window.location.href = 'login.html'; // Redirect to login page
-            });
-            
-            // Simulate real-time data changes
-           /setInterval(() => {
-               const heartValue = document.getElementById('currentHeartRate');
-                const oxygenValue = document.getElementById('currentOxygen');
+            // Show page function
+            function showPage(page) {
+                // Hide all pages
+                $('.form-page').removeClass('active');
                 
-                // Generate random values within normal ranges
-                const newHeart = Math.floor(Math.random() * 10) + 70;
-                const newOxygen = Math.floor(Math.random() * 3) + 96;
+                // Show the requested page
+                $('#' + page).addClass('active');
                 
-                heartValue.textContent = newHeart;
-                oxygenValue.textContent = newOxygen;
-            }, 5000);
-            
-            // Camera controls
-            const startCameraBtn = document.getElementById('startCameraBtn');
-            const captureBtn = document.getElementById('captureBtn');
-            const downloadReportBtn = document.getElementById('downloadReportBtn');
-            const previewReportBtn = document.getElementById('previewReportBtn');
-            
-            let cameraActive = false;
-            
-            startCameraBtn.addEventListener('click', function() {
-                cameraActive = !cameraActive;
-                if (cameraActive) {
-                    this.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
-                    this.classList.remove('btn-primary');
-                    this.classList.add('btn-danger');
-                    captureBtn.disabled = false;
+                // Show/hide back button
+                if (page === 'login') {
+                    $('#backButton').hide();
                 } else {
-                    this.innerHTML = '<i class="fas fa-play"></i> Start Camera';
-                    this.classList.remove('btn-danger');
-                    this.classList.add('btn-primary');
-                    captureBtn.disabled = true;
+                    $('#backButton').show();
+                }
+                
+                // Update current page
+                currentPage = page;
+            }
+            
+            // Navigation handlers
+            $('#register').click(function(e) {
+                e.preventDefault();
+                showPage('registerPage');
+            });
+            
+            $('#loginLink, #loginLink2, #loginLink3').click(function(e) {
+                e.preventDefault();
+                showPage('loginPage');
+            });
+            
+            $('#forgotPassword').click(function(e) {
+                e.preventDefault();
+                showPage('forgotPage');
+            });
+            
+            $('#goToLogin').click(function(e) {
+                e.preventDefault();
+                showPage('loginPage');
+            });
+            
+            $('#backButton').click(function() {
+                if (currentPage === 'registerPage' || currentPage === 'forgotPage') {
+                    showPage('loginPage');
+                } else if (currentPage === 'resetPage') {
+                    showPage('forgotPage');
                 }
             });
             
-            captureBtn.addEventListener('click', function() {
-                if (!cameraActive) return;
-                alert('Image captured successfully! Analysis in progress...');
-            });
-            
-            // Preview report functionality
-            previewReportBtn.addEventListener('click', function() {
-                document.getElementById('pdfModal').style.display = 'flex';
-            });
-            
-            // Close PDF preview
-            document.getElementById('closePdfBtn').addEventListener('click', function() {
-                document.getElementById('pdfModal').style.display = 'none';
-            });
-            
-            // Download report functionality with graphs in two pages
-            downloadReportBtn.addEventListener('click', function() {
-                // Using jsPDF to generate a PDF report
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title and date
-                doc.setFontSize(22);
-                doc.text('HealthAI Patient Report', 105, 20, null, null, 'center');
-                doc.setFontSize(12);
-                doc.setTextColor(100);
-                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 30, null, null, 'center');
-                
-                // Add separator
-                doc.setDrawColor(52, 152, 219);
-                doc.setLineWidth(0.5);
-                doc.line(20, 35, 190, 35);
-                
-                // Add patient summary with empty fields
-                doc.setFontSize(16);
-                doc.setTextColor(0);
-                doc.text('Patient Summary', 20, 45);
-                
-                doc.setFontSize(12);
-                doc.text('Name: __________', 20, 55);
-                doc.text('ID Number: __________', 20, 65);
-                
-                // Convert charts to images
-                const heartRateImage = heartRateChartInstance.toBase64Image();
-                const oxygenImage = oxygenChartInstance.toBase64Image();
-                const realtimeImage = realtimeChartInstance.toBase64Image();
-                
-                // Add heart rate chart to page 1
-                doc.text('Heart Rate History', 20, 75);
-                doc.addImage(heartRateImage, 'JPEG', 20, 80, 170, 80);
-                
-                // Add oxygen chart to page 1
-                doc.text('Oxygen Level History', 20, 165);
-                doc.addImage(oxygenImage, 'JPEG', 20, 170, 170, 80);
-                
-                // Add page number
-                doc.setFontSize(10);
-                doc.setTextColor(150);
-                doc.text('Page 1 of 2', 105, 280, null, null, 'center');
-                
-                // Add second page
-                doc.addPage();
-                
-                // Page 2 header
-                doc.setFontSize(22);
-                doc.text('HealthAI Patient Report', 105, 20, null, null, 'center');
-                doc.setFontSize(12);
-                doc.setTextColor(100);
-                doc.text('Page 2: Detailed Analysis', 105, 30, null, null, 'center');
-                doc.setDrawColor(52, 152, 219);
-                doc.line(20, 35, 190, 35);
-                
-                // Add real-time monitoring chart
-                doc.setFontSize(16);
-                doc.setTextColor(0);
-                doc.text('Real-time Monitoring', 20, 45);
-                doc.setDrawColor(52, 152, 219);
-                doc.line(20, 35, 190, 35);
-
-                
-                // Add vital signs summary (only heart rate and oxygen level)
-                doc.setFontSize(16);
-                doc.text('Vital Signs Summary', 20, 135);
-                
-                // Create table for vital signs
-                const vitalData = [
-                    { parameter: 'Heart Rate', value: '72 bpm', status: 'Normal' },
-                    { parameter: 'Oxygen Level', value: '98%', status: 'Optimal' }
-                ];
-                
-                // Table headers
-                doc.setFillColor(52, 152, 219);
-                doc.setTextColor(255);
-                doc.rect(20, 140, 170, 10, 'F');
-                doc.text('Parameter', 25, 147);
-                doc.text('Value', 100, 147);
-                doc.text('Status', 160, 147);
-                
-                // Table rows
-                vitalData.forEach((item, index) => {
-                    const yPos = 150 + (index * 10);
-                    doc.setFillColor(index % 2 === 0 ? 240 : 255);
-                    doc.setTextColor(0);
-                    doc.rect(20, yPos, 170, 10, 'F');
-                    doc.text(item.parameter, 25, yPos + 7);
-                    doc.text(item.value, 100, yPos + 7);
-                    
-                    // Color-code status
-                    if (item.status === 'Normal' || item.status === 'Optimal') {
-                        doc.setTextColor(46, 204, 113);
-                    } else if (item.status === 'Warning') {
-                        doc.setTextColor(243, 156, 18);
-                    } else {
-                        doc.setTextColor(231, 76, 60);
-                    }
-                    doc.text(item.status, 160, yPos + 7);
+            // Password toggle functionality
+            function setupPasswordToggle(inputId, toggleId) {
+                $(toggleId).click(function() {
+                    const input = $(inputId);
+                    const type = input.attr('type') === 'password' ? 'text' : 'password';
+                    input.attr('type', type);
+                    $(this).toggleClass('fa-eye fa-eye-slash');
                 });
+            }
+            
+            // Set up password toggles
+            setupPasswordToggle('#regPassword', '#regPasswordToggle');
+            setupPasswordToggle('#confirmPassword', '#confirmPasswordToggle');
+            setupPasswordToggle('#newPassword', '#newPasswordToggle');
+            setupPasswordToggle('#confirmNewPassword', '#confirmNewPasswordToggle');
+            
+            // Password strength checker
+            function checkPasswordStrength(password) {
+                let strength = 0;
                 
-                // Add health recommendations
-                doc.setFontSize(16);
-                doc.setTextColor(0);
-                doc.text('Health Recommendations', 20, 180);
+                if (password.length >= 8) strength += 1;
+                if (/[A-Z]/.test(password)) strength += 1;
+                if (/[a-z]/.test(password)) strength += 1;
+                if (/[0-9]/.test(password)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 1;
                 
-                doc.setFontSize(12);
-                doc.setTextColor(0);
-                doc.text('- Continue current medication regimen', 20, 190);
-                doc.text('- Follow up with cardiologist in 3 months', 20, 200);
-                doc.text('- Maintain healthy lifestyle habits', 20, 210);
+                return strength;
+            }
+            
+            function updatePasswordStrength(password, meterId) {
+                const strength = checkPasswordStrength(password);
+                const meter = $(meterId);
                 
-                // Add page number
-                doc.setFontSize(10);
-                doc.setTextColor(150);
-                doc.text('Page 2 of 2', 105, 280, null, null, 'center');
+                // Reset classes
+                meter.removeClass('strength-weak strength-medium strength-strong strength-very-strong');
                 
-                // Add footer
-                doc.setFontSize(10);
-                doc.setTextColor(100);
-                doc.text('Generated by HealthAI Patient Monitoring System', 105, 290, null, null, 'center');
+                if (password.length === 0) {
+                    meter.css('width', '0');
+                    return;
+                }
                 
-                // Save the PDF
-                doc.save(`health_report_${new Date().getTime()}.pdf`);
+                if (strength < 2) {
+                    meter.addClass('strength-weak');
+                } else if (strength < 4) {
+                    meter.addClass('strength-medium');
+                } else if (strength < 5) {
+                    meter.addClass('strength-strong');
+                } else {
+                    meter.addClass('strength-very-strong');
+                }
+            }
+            
+            // Password strength listeners
+            $('#regPassword').on('input', function() {
+                updatePasswordStrength($(this).val(), '#passwordStrength');
+            });
+            
+            $('#newPassword').on('input', function() {
+                updatePasswordStrength($(this).val(), '#newPasswordStrength');
+            });
+            
+            // Form validation and submission
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                let isValid = true;
                 
-                // Show confirmation
-                alert('Comprehensive health report downloaded successfully!');
+                // Email validation
+                const email = $('#email').val();
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    $('#emailError').show();
+                    isValid = false;
+                } else {
+                    $('#emailError').hide();
+                }
+                
+                // Password validation
+                const password = $('#password').val();
+                if (!password || password.length < 6) {
+                    $('#passwordError').show();
+                    isValid = false;
+                } else {
+                    $('#passwordError').hide();
+                }
+                
+               if (isValid) {
+                    // Simulate login (in a real app, this would be an AJAX call to your backend)
+                    console.log('Login attempt with:', email, password);
+                    
+                    // Redirect to the main app
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Registration form validation
+            $('#registerForm').on('submit', function(e) {
+                e.preventDefault();
+                let isValid = true;
+                
+                // Name validation
+                const fullName = $('#fullName').val();
+                if (!fullName || fullName.trim().length < 2) {
+                    $('#nameError').show();
+                    isValid = false;
+                } else {
+                    $('#nameError').hide();
+                }
+                
+                // Email validation
+                const regEmail = $('#regEmail').val();
+                if (!regEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
+                    $('#regEmailError').show();
+                    isValid = false;
+                } else {
+                    $('#regEmailError').hide();
+                }
+                
+                // Password validation
+                const regPassword = $('#regPassword').val();
+                if (!regPassword || regPassword.length < 8) {
+                    $('#regPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#regPasswordError').hide();
+                }
+                
+                // Confirm password validation
+                const confirmPassword = $('#confirmPassword').val();
+                if (!confirmPassword || confirmPassword !== regPassword) {
+                    $('#confirmPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#confirmPasswordError').hide();
+                }
+                
+                if (isValid) {
+                    // Simulate registration
+                    console.log('Registration with:', fullName, regEmail);
+                    
+                    // Show confirmation page
+                    showPage('confirmationPage');
+                }
+            });
+            
+            // Forgot password form
+            $('#forgotForm').on('submit', function(e) {
+                e.preventDefault();
+                let isValid = true;
+                
+                // Email validation
+                const forgotEmail = $('#forgotEmail').val();
+                if (!forgotEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail)) {
+                    $('#forgotEmailError').show();
+                    $('#forgotEmailSuccess').hide();
+                    isValid = false;
+                } else {
+                    $('#forgotEmailError').hide();
+                    
+                    // Simulate sending reset link
+                    console.log('Sending reset link to:', forgotEmail);
+                    
+                    // Show success message
+                    $('#forgotEmailSuccess').show();
+                    
+                    // Move to reset page after 2 seconds
+                    setTimeout(() => {
+                        showPage('resetPage');
+                        $('#forgotEmailSuccess').hide();
+                    }, 2000);
+                }
+            });
+            
+            // Reset password form
+            $('#resetForm').on('submit', function(e) {
+                e.preventDefault();
+                let isValid = true;
+                
+                // Password validation
+                const newPassword = $('#newPassword').val();
+                if (!newPassword || newPassword.length < 8) {
+                    $('#newPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#newPasswordError').hide();
+                }
+                
+                // Confirm password validation
+                const confirmNewPassword = $('#confirmNewPassword').val();
+                if (!confirmNewPassword || confirmNewPassword !== newPassword) {
+                    $('#confirmNewPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#confirmNewPasswordError').hide();
+                }
+                
+                if (isValid) {
+                    // Simulate password reset
+                    console.log('Password reset with:', newPassword);
+                    
+                    // Show success and redirect to login
+                    alert('Password has been reset successfully!');
+                    showPage('loginPage');
+                }
             });
         });
     </script>

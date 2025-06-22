@@ -1431,8 +1431,8 @@
 		db.ref("monitoring").on("value", snapshot => {
 	            const data = snapshot.val();
 	           
-	            document.getElementById("heartnumber").innerHTML = data.bp;
-		    document.getElementById("oxygennumber").innerHTML = data.oxygen;
+	           document.getElementById('currentHeartRate').innerHTML = data.bp;
+		    document.getElementById('currentOxygen').innerHTML = data.oxygen;
 			
 	
 	            

@@ -1298,72 +1298,64 @@
                 }
             });
             
-            // Oxygen Level Chart
-		db.ref("savedmonitoringdata").once("value").then(snapshot => {
-		  const rawData = snapshot.val();
-		
-		  const oxygenlabels = [];
-		  const oxygendata = [];
-		
-		  for (let key in rawData) {
-		    const entry = rawData[key];
-		    const timestamp = entry.timestamp;  // e.g., "22/06/2025 5:05 PM"
-		    const oxygen = entry.oxygen;
-		
-		    // Extract just the time part: "5:05 PM"
-		    const timeLabel = timestamp.split(" ")[1] + " " + timestamp.split(" ")[2];
-		
-		    oxygenlabels.push(timeLabel);
-		    oxygendata.push(oxygen);
-		  }
-		
-		  console.log("labels:", oxygenlabels);
-		  console.log("data:", oxygendata);
-		
-		  // Use in chart.js like:
-		  // chart.data.labels = labels;
-		  // chart.data.datasets[0].data = data;
-		  // chart.update();
-		
-		}).catch(error => {
-		  console.error("Error fetching data:", error);
-		});
+           // Oxygen Level Chart
+db.ref("savedmonitoringdata").once("value").then(snapshot => {
+  const rawData = snapshot.val();
 
+  const oxygenlabels = [];
+  const oxygendata = [];
 
-		
-            const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
-            oxygenChartInstance = new Chart(oxygenCtx, {
-                type: 'line',
-                data: {
-                    labels: oxygenlabels,
-                    datasets: [{
-                        label: 'Oxygen Level (%)',
-                        data: oxygendata,
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 90,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
+  for (let key in rawData) {
+    const entry = rawData[key];
+    const timestamp = entry.timestamp;  // e.g., "22/06/2025 5:05 PM"
+    const oxygen = entry.oxygen;
+
+    // Extract just the time part: "5:05 PM"
+    const timeLabel = timestamp.split(" ")[1] + " " + timestamp.split(" ")[2];
+
+    oxygenlabels.push(timeLabel);
+    oxygendata.push(oxygen);
+  }
+
+  // ✅ CREATE CHART AFTER data is ready
+  const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
+  const oxygenChartInstance = new Chart(oxygenCtx, {
+    type: 'line',
+    data: {
+      labels: oxygenlabels,
+      datasets: [{
+        label: 'Oxygen Level (%)',
+        data: oxygendata,
+        borderColor: '#3498db',
+        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 90,
+          max: 100,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  });
+
+}).catch(error => {
+  console.error("Error fetching data:", error);
+});
+
             
             // Real-time Chart
             const realtimeCtx = document.getElementById('realtimeChart').getContext('2d');

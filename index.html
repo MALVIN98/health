@@ -1459,50 +1459,44 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
             
 
 		db.ref("monitoring").on("value", snapshot => {
-	            const data = snapshot.val();
-	           
-	           fbnewHeart = document.getElementById('currentHeartRate').innerHTML = data.bp + " bpm";
-		    fbnewOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen + "%";
+  const data = snapshot.val();
 
-			let bpmStatus = "";
-			let spo2Status = "";
-			
-			// Evaluate BPM
-			if (fbnewHeart  < 60) {
-			  bpmStatus = "bpm • Low";
-			} else if (fbnewHeart  >= 60 && fbnewHeart <= 100) {
-			  bpmStatus = "bpm • Normal";
-			} else {
-			  bpmStatus = "bpm • High";
-			}
-			
-			// Evaluate SpO2
-			if (fbnewOxygen >= 95) {
-			  spo2Status = "SpO2 • Optimal";
-			} else if (fbnewOxygen >= 90 && fbnewOxygen < 95) {
-			  spo2Status = "SpO2 • Moderate";
-			} else {
-			  spo2Status = "SpO2 • Low";
-			}
+  const bpm = data.bp;         // e.g., 90
+  const spo2 = data.oxygen;    // e.g., 97
 
-		const heartValue = document.getElementById('currentHeartRate');
-                const oxygenValue = document.getElementById('currentOxygen');
+  // Update the displayed values
+  document.getElementById('currentHeartRate').textContent = bpm + " bpm";
+  document.getElementById('currentOxygen').textContent = spo2 + "%";
 
-			const heartcomment = document.getElementById('heartcomment');
-			const oxygencomment = document.getElementById('oxygencomment');
+  let bpmStatus = "";
+  let spo2Status = "";
 
-		heartValue.textContent = fbnewHeart;
-                oxygenValue.textContent = fbnewOxygen;
+  // Evaluate BPM
+  if (bpm < 60) {
+    bpmStatus = "bpm • Low";
+  } else if (bpm >= 60 && bpm <= 100) {
+    bpmStatus = "bpm • Normal";
+  } else {
+    bpmStatus = "bpm • High";
+  }
 
-			heartcomment.textContent = bpmStatus ;
-			oxygencomment.textContent = spo2Status ;
-	
-			
-	
-	            
-	            }, error => {
-	            console.error("Realtime read failed:", error);
-	            });
+  // Evaluate SpO2
+  if (spo2 >= 95) {
+    spo2Status = "SpO2 • Optimal";
+  } else if (spo2 >= 90 && spo2 < 95) {
+    spo2Status = "SpO2 • Moderate";
+  } else {
+    spo2Status = "SpO2 • Low";
+  }
+
+  // Update the comments in real time
+  document.getElementById('heartcomment').textContent = bpmStatus;
+  document.getElementById('oxygencomment').textContent = spo2Status;
+
+}, error => {
+  console.error("Realtime read failed:", error);
+});
+
 
 		
 /*

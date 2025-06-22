@@ -1434,9 +1434,10 @@
 		db.ref("monitoring").on("value", snapshot => {
 	            const data = snapshot.val();
 	           
-	           document.getElementById('currentHeartRate').innerHTML = data.bp;
-		    document.getElementById('currentOxygen').innerHTML = data.oxygen;
-			
+	           newHeart = document.getElementById('currentHeartRate').innerHTML = data.bp;
+		    newOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen;
+
+			console.log(data)
 	
 	            
 	            }, error => {

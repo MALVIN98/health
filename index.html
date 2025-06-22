@@ -815,7 +815,7 @@
                         <div class="card-header">
                             <div>
                                 <div class="card-title">Heart Rate</div>
-                                <div class="card-value" id="heartnumber">0</div>
+                                <div class="card-value" id="currentHeartRate">0</div>
                             </div>
                             <div class="card-icon heart-icon">
                                 <i class="fas fa-heartbeat"></i>
@@ -828,7 +828,7 @@
                         <div class="card-header">
                             <div>
                                 <div class="card-title" >Oxygen Level</div>
-                                <div class="card-value" id="oxygennumber">0%</div>
+                                <div class="card-value" id="currentOxygen">0%</div>
                             </div>
                             <div class="card-icon oxygen-icon">
                                 <i class="fas fa-lungs"></i>
@@ -1434,8 +1434,8 @@
 		db.ref("monitoring").on("value", snapshot => {
 	            const data = snapshot.val();
 	           
-	           newHeart = document.getElementById('currentHeartRate').innerHTML = data.bp;
-		    newOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen;
+	           fbnewHeart = document.getElementById('currentHeartRate').innerHTML = data.bp;
+		    fbnewOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen;
 
 			console.log(data)
 	
@@ -1454,8 +1454,8 @@
                 const newHeart = Math.floor(Math.random() * 10) + 70;
                 const newOxygen = Math.floor(Math.random() * 3) + 96;
                 
-                heartValue.textContent = newHeart;
-                oxygenValue.textContent = newOxygen;
+                heartValue.textContent = fbnewHeart;
+                oxygenValue.textContent = fbnewOxygen;
 
             }, 5000);
             

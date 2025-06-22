@@ -1438,7 +1438,40 @@
 	           fbnewHeart = document.getElementById('currentHeartRate').innerHTML = data.bp;
 		    fbnewOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen;
 
-			console.log(data)
+			let bpmStatus = "";
+			let spo2Status = "";
+			
+			// Evaluate BPM
+			if (bpm < 60) {
+			  bpmStatus = "bpm • Low";
+			} else if (bpm >= 60 && bpm <= 100) {
+			  bpmStatus = "bpm • Normal";
+			} else {
+			  bpmStatus = "bpm • High";
+			}
+			
+			// Evaluate SpO2
+			if (spo2 >= 95) {
+			  spo2Status = "SpO2 • Optimal";
+			} else if (spo2 >= 90 && spo2 < 95) {
+			  spo2Status = "SpO2 • Moderate";
+			} else {
+			  spo2Status = "SpO2 • Low";
+			}
+
+		const heartValue = document.getElementById('currentHeartRate');
+                const oxygenValue = document.getElementById('currentOxygen');
+
+			const heartcomment = document.getElementById('heartcomment');
+			const oxygencomment = document.getElementById('oxygencomment');
+
+		heartValue.textContent = fbnewHeart;
+                oxygenValue.textContent = fbnewOxygen;
+
+			heartcomment.textContent = bpmStatus;
+			oxygencomment.textContent = spo2Status;
+	
+			
 	
 	            
 	            }, error => {
@@ -1446,7 +1479,7 @@
 	            });
 
 		
-
+/*
             setInterval(() => {
                 const heartValue = document.getElementById('currentHeartRate');
                 const oxygenValue = document.getElementById('currentOxygen');
@@ -1458,7 +1491,9 @@
                 heartValue.textContent = fbnewHeart;
                 oxygenValue.textContent = fbnewOxygen;
 
-            }, 5000);
+		    
+
+            }, 5000);*/
             
             // Camera controls
             const startCameraBtn = document.getElementById('startCameraBtn');

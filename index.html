@@ -1450,10 +1450,13 @@
                 const heartValue = document.getElementById('currentHeartRate');
                 const oxygenValue = document.getElementById('currentOxygen');
                 
-              
+                // Generate random values within normal ranges
+                const newHeart = Math.floor(Math.random() * 10) + 70;
+                const newOxygen = Math.floor(Math.random() * 3) + 96;
                 
                 heartValue.textContent = newHeart;
                 oxygenValue.textContent = newOxygen;
+
             }, 5000);
             
             // Camera controls

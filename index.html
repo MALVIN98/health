@@ -1283,14 +1283,46 @@
             });
             
             // Oxygen Level Chart
+		db.ref("savedmonitoringdata").once("value").then(snapshot => {
+		  const rawData = snapshot.val();
+		
+		  const oxygenlabels = [];
+		  const oxygendata = [];
+		
+		  for (let key in rawData) {
+		    const entry = rawData[key];
+		    const timestamp = entry.timestamp;  // e.g., "22/06/2025 5:05 PM"
+		    const oxygen = entry.oxygen;
+		
+		    // Extract just the time part: "5:05 PM"
+		    const timeLabel = timestamp.split(" ")[1] + " " + timestamp.split(" ")[2];
+		
+		    oxygenlabels.push(timeLabel);
+		    oxygendata.push(oxygen);
+		  }
+		
+		  console.log("labels:", oxygenlabels);
+		  console.log("data:", oxygendata);
+		
+		  // Use in chart.js like:
+		  // chart.data.labels = labels;
+		  // chart.data.datasets[0].data = data;
+		  // chart.update();
+		
+		}).catch(error => {
+		  console.error("Error fetching data:", error);
+		});
+
+
+		
             const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
             oxygenChartInstance = new Chart(oxygenCtx, {
                 type: 'line',
                 data: {
-                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
+                    labels: oxygenlabels,
                     datasets: [{
                         label: 'Oxygen Level (%)',
-                        data: [98, 97, 98, 96, 97, 98],
+                        data: oxygendata,
                         borderColor: '#3498db',
                         backgroundColor: 'rgba(52, 152, 219, 0.1)',
                         tension: 0.4,

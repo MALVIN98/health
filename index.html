@@ -812,26 +812,26 @@
                         <div class="card-header">
                             <div>
                                 <div class="card-title">Heart Rate</div>
-                                <div class="card-value">0</div>
+                                <div class="card-value" id="heartnumber">0</div>
                             </div>
                             <div class="card-icon heart-icon">
                                 <i class="fas fa-heartbeat"></i>
                             </div>
                         </div>
-                        <div class="card-footer">bpm • Normal</div>
+                        <div class="card-footer" id="heartcomment">bpm • Normal</div>
                     </div>
                     
                     <div class="card">
                         <div class="card-header">
                             <div>
-                                <div class="card-title">Oxygen Level</div>
-                                <div class="card-value">0%</div>
+                                <div class="card-title" >Oxygen Level</div>
+                                <div class="card-value" id="oxygennumber">0%</div>
                             </div>
                             <div class="card-icon oxygen-icon">
                                 <i class="fas fa-lungs"></i>
                             </div>
                         </div>
-                        <div class="card-footer">SpO2 • Optimal</div>
+                        <div class="card-footer" id="oxygencomment">SpO2 • Optimal</div>
                     </div>
                     
                     <div class="card">
@@ -1413,6 +1413,35 @@
             });
             
             // Simulate real-time data changes
+		const firebaseConfig = {
+		      apiKey: "AIzaSyD0IfsKU-H3j7RImqcxzQxAVpEKpq6QywM",
+		      authDomain: "testing-b5fda.firebaseapp.com",
+		      projectId: "testing-b5fda",
+		      storageBucket: "testing-b5fda.appspot.com",
+		      messagingSenderId: "329100319947",
+		      appId: "1:329100319947:web:68538e4a7fda208b218f4e",
+		      measurementId: "G-3VK7XVTRD1",
+		      databaseURL: "https://testing-b5fda-default-rtdb.firebaseio.com"
+		    };
+		
+	    // Initialize Firebase
+	    firebase.initializeApp(firebaseConfig);
+	    const db = firebase.database();
+
+		db.ref("monitoring").on("value", snapshot => {
+	            const data = snapshot.val();
+	           
+	            document.getElementById("heartnumber").innerHTML = data.bp;
+		    document.getElementById("oxygennumber").innerHTML = data.oxygen;
+			
+	
+	            
+	            }, error => {
+	            console.error("Realtime read failed:", error);
+	            });
+
+		
+
             setInterval(() => {
                 const heartValue = document.getElementById('currentHeartRate');
                 const oxygenValue = document.getElementById('currentOxygen');

@@ -1435,8 +1435,8 @@
 		db.ref("monitoring").on("value", snapshot => {
 	            const data = snapshot.val();
 	           
-	           fbnewHeart = document.getElementById('currentHeartRate').innerHTML = data.bp;
-		    fbnewOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen;
+	           fbnewHeart = document.getElementById('currentHeartRate').innerHTML = data.bp + " bpm";
+		    fbnewOxygen= document.getElementById('currentOxygen').innerHTML = data.oxygen + "%";
 
 			let bpmStatus = "";
 			let spo2Status = "";
@@ -1468,8 +1468,8 @@
 		heartValue.textContent = fbnewHeart;
                 oxygenValue.textContent = fbnewOxygen;
 
-			heartcomment.textContent = bpmStatus + " bpm";
-			oxygencomment.textContent = spo2Status + "%";
+			heartcomment.textContent = bpmStatus ;
+			oxygencomment.textContent = spo2Status ;
 	
 			
 	

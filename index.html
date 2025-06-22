@@ -1521,7 +1521,7 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
             
-            let cameraActive = false;
+            let cameraActive = true;
             
             startCameraBtn.addEventListener('click', function() {
                 cameraActive = !cameraActive;

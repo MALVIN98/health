@@ -1299,7 +1299,7 @@
             });
             
            // Oxygen Level Chart
-db.ref("monitoring").on("value").then(snapshot => {
+db.ref("savedmonitoringdata").on("value").then(snapshot => {
   const rawData = snapshot.val();
 
   const oxygenlabels = [];
@@ -1458,7 +1458,7 @@ db.ref("monitoring").on("value").then(snapshot => {
             
             
 
-		db.ref("monitoring").on("value", snapshot => {
+		db.ref("savedmonitoringdata").on("value", snapshot => {
   const data = snapshot.val();
 
   const bpm = data.bp;         // e.g., 90

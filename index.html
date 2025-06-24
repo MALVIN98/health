@@ -1299,7 +1299,7 @@
             });
             
            // Oxygen Level Chart
-db.ref("savedmonitoringdata").on("value").then(snapshot => {
+db.ref("savedmonitoringdata").once("value").then(snapshot => {
   const rawData = snapshot.val();
 
   const oxygenlabels = [];
@@ -1458,44 +1458,30 @@ db.ref("savedmonitoringdata").on("value").then(snapshot => {
             
             
 
-		db.ref("savedmonitoringdata").on("value", snapshot => {
-  const data = snapshot.val();
+		
+db.ref("savedmonitoringdata").once("value").then(snapshot => {
+  const rawData = snapshot.val();
+  const bpData = [];
+  const spo2Data = [];
+  const labels = [];
 
-  const bpm = data.bp;         // e.g., 90
-  const spo2 = data.oxygen;    // e.g., 97
-
-  // Update the displayed values
-  document.getElementById('currentHeartRate').textContent = bpm + " bpm";
-  document.getElementById('currentOxygen').textContent = spo2 + "%";
-
-  let bpmStatus = "";
-  let spo2Status = "";
-
-  // Evaluate BPM
-  if (bpm < 60) {
-    bpmStatus = "bpm • Low";
-  } else if (bpm >= 60 && bpm <= 100) {
-    bpmStatus = "bpm • Normal";
-  } else {
-    bpmStatus = "bpm • High";
+  for (let key in rawData) {
+    const entry = rawData[key];
+    bpData.push(parseFloat(entry.bp));
+    spo2Data.push(parseFloat(entry.oxygen));
+    labels.push(entry.timestamp);
   }
 
-  // Evaluate SpO2
-  if (spo2 >= 95) {
-    spo2Status = "SpO2 • Optimal";
-  } else if (spo2 >= 90 && spo2 < 95) {
-    spo2Status = "SpO2 • Moderate";
-  } else {
-    spo2Status = "SpO2 • Low";
-  }
+  chart.data.labels = labels;
+  chart.data.datasets[0].data = bpData;
+  chart.data.datasets[1].data = spo2Data;
+  chart.update();
 
-  // Update the comments in real time
-  document.getElementById('heartcomment').textContent = bpmStatus;
-  document.getElementById('oxygencomment').textContent = spo2Status;
-
-}, error => {
-  console.error("Realtime read failed:", error);
+  document.getElementById("bpm").textContent = bpData[bpData.length - 1];
+  document.getElementById("spo2").textContent = spo2Data[spo2Data.length - 1];
+  document.getElementById("timestamp").textContent = labels[labels.length - 1];
 });
+
 
 
 		

@@ -979,11 +979,10 @@
                         <div class="chart-title">
                             <i class="fas fa-video"></i> Camera Feed
                         </div>
-                        <div class="video-container">
-                            <div class="video-placeholder">
-                                <i class="fas fa-video"></i> AI Camera Feed
-                            </div>
-                        </div>
+                         <div class="video-container">
+                     	 	<video id="cameraFeed" autoplay playsinline></video>
+                     		 <canvas id="cameraCanvas" style="display: none;"></canvas>
+                     	 </div>
                         <div class="controls">
                             <button class="btn btn-primary" id="startCameraBtn">
                                 <i class="fas fa-play"></i> Start Camera
@@ -1501,32 +1500,80 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
 
             }, 5000);*/
             
-            // Camera controls
+             // Camera controls
             const startCameraBtn = document.getElementById('startCameraBtn');
             const captureBtn = document.getElementById('captureBtn');
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
-            
-            let cameraActive = true;
-            
-            startCameraBtn.addEventListener('click', function() {
-                cameraActive = !cameraActive;
+            const cameraFeed = document.getElementById('cameraFeed');
+            const cameraCanvas = document.getElementById('cameraCanvas');
+
+            let cameraStream = null;
+            let cameraActive = false;
+
+           async function startCamera() {
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: "environment" } // back camera on phones
+            },
+            audio: false
+        });
+        cameraFeed.srcObject = cameraStream;
+        cameraActive = true;
+    } catch (err) {
+        alert("Error accessing camera: " + err.message);
+    }
+}
+
+
+            function stopCamera() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraFeed.srcObject = null;
+                    cameraActive = false;
+                }
+            }
+
+            startCameraBtn.addEventListener('click', function () {
                 if (cameraActive) {
-                    this.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
-                    this.classList.remove('btn-primary');
-                    this.classList.add('btn-danger');
-                    captureBtn.disabled = false;
-                } else {
+                    stopCamera();
                     this.innerHTML = '<i class="fas fa-play"></i> Start Camera';
                     this.classList.remove('btn-danger');
                     this.classList.add('btn-primary');
                     captureBtn.disabled = true;
+                } else {
+                    startCamera();
+                    this.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-danger');
+                    captureBtn.disabled = false;
                 }
             });
-            
-            captureBtn.addEventListener('click', function() {
+
+            captureBtn.addEventListener('click', function () {
                 if (!cameraActive) return;
+                const context = cameraCanvas.getContext('2d');
+                cameraCanvas.width = cameraFeed.videoWidth;
+                cameraCanvas.height = cameraFeed.videoHeight;
+                context.drawImage(cameraFeed, 0, 0, cameraCanvas.width, cameraCanvas.height);
                 alert('Image captured successfully! Analysis in progress...');
+            });
+
+            previewReportBtn.addEventListener('click', function () {
+                if (cameraCanvas.toDataURL() === '') {
+                    alert('No image captured yet!');
+                    return;
+                }
+                const previewWindow = window.open();
+                previewWindow.document.write('<img src="' + cameraCanvas.toDataURL('image/png') + '" />');
+            });
+
+            downloadReportBtn.addEventListener('click', function () {
+                const link = document.createElement('a');
+                link.download = 'captured_image.png';
+                link.href = cameraCanvas.toDataURL('image/png');
+                link.click();
             });
             
             // Preview report functionality

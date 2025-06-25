@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-	<!-- Firebase App (the core Firebase SDK) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --primary: #3498db;
@@ -749,6 +746,39 @@
             min-width: 150px;
             display: inline-block;
         }
+        
+        /* Camera feed */
+        #videoFeed {
+            width: 100%;
+            height: 100%;
+            display: none;
+            object-fit: cover;
+        }
+        
+        .camera-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .camera-controls .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .captured-image-container {
+            display: none;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .captured-image {
+            max-width: 100%;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -777,13 +807,6 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-		    <!--
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-section="monitoring">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>Monitoring</span>
-                    </a>
-                </li> -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-section="camera">
                         <i class="fas fa-video"></i>
@@ -816,29 +839,29 @@
                         <div class="card-header">
                             <div>
                                 <div class="card-title">Heart Rate</div>
-                                <div class="card-value" id="currentHeartRate">0</div>
+                                <div class="card-value" id="currentHeartRate">72</div>
                             </div>
                             <div class="card-icon heart-icon">
                                 <i class="fas fa-heartbeat"></i>
                             </div>
                         </div>
-                        <div class="card-footer" id="heartcomment">bpm • Normal</div>
+                        <div class="card-footer">bpm • Normal</div>
                     </div>
                     
                     <div class="card">
                         <div class="card-header">
                             <div>
-                                <div class="card-title" >Oxygen Level</div>
-                                <div class="card-value" id="currentOxygen">0%</div>
+                                <div class="card-title">Oxygen Level</div>
+                                <div class="card-value" id="currentOxygen">98%</div>
                             </div>
                             <div class="card-icon oxygen-icon">
                                 <i class="fas fa-lungs"></i>
                             </div>
                         </div>
-                        <div class="card-footer" id="oxygencomment">SpO2 • Optimal</div>
+                        <div class="card-footer">SpO2 • Optimal</div>
                     </div>
                     
-                  <!--  <div class="card">
+                    <div class="card">
                         <div class="card-header">
                             <div>
                                 <div class="card-title">Next Medication</div>
@@ -849,7 +872,7 @@
                             </div>
                         </div>
                         <div class="card-footer">Metformin • 500mg</div>
-                    </div>-->
+                    </div>
                 </div>
                 
                 <div class="charts-container">
@@ -909,67 +932,6 @@
                 </div>
             </div>
             
-            <!-- Monitoring Section -->
-            <div class="page-section" id="monitoring-section">
-                <h1 class="section-title">Health Monitoring</h1>
-                
-                <div class="dashboard-grid">
-                    <div class="vital-card">
-                        <div class="vital-icon vital-heart">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="vital-value" id="currentHeartRate">0</div>
-                        <div class="vital-label">Heart Rate (BPM)</div>
-                        <div class="vital-status status-normal">Normal</div>
-                    </div>
-                    
-                    <div class="vital-card">
-                        <div class="vital-icon vital-oxygen">
-                            <i class="fas fa-lungs"></i>
-                        </div>
-                        <div class="vital-value" id="currentOxygen">0</div>
-                        <div class="vital-label">Oxygen Level (%)</div>
-                        <div class="vital-status status-normal">Optimal</div>
-                    </div>
-                </div>
-                
-                <div class="chart-card">
-                    <div class="chart-title">Real-time Monitoring</div>
-                    <div class="chart-container">
-                        <canvas id="realtimeChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="alerts-section">
-                    <div class="alerts-title">
-                        <i class="fas fa-history"></i>
-                        Recent Health Events
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-heart">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Heart Rate Increase</h4>
-                            <p>Increased to 105 bpm for 2 minutes</p>
-                        </div>
-                        <div class="alert-time">Today, 11:45 AM</div>
-                    </div>
-                    
-                    <div class="alert-item">
-                        <div class="alert-icon alert-oxygen">
-                            <i class="fas fa-lungs"></i>
-                        </div>
-                        <div class="alert-content">
-                            <h4>Oxygen Fluctuation</h4>
-                            <p>Dropped to 93% for 1 minute</p>
-                        </div>
-                        <div class="alert-time">Today, 10:15 AM</div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Camera Section -->
             <div class="page-section" id="camera-section">
                 <h1 class="section-title">Health Camera</h1>
@@ -979,22 +941,37 @@
                         <div class="chart-title">
                             <i class="fas fa-video"></i> Camera Feed
                         </div>
-                         <div class="video-container">
-                     	 	<video id="cameraFeed" autoplay playsinline></video>
-                     		 <canvas id="cameraCanvas" style="display: none;"></canvas>
-                     	 </div>
-                        <div class="controls">
+                        <div class="video-container">
+                            <div class="video-placeholder" id="cameraPlaceholder">
+                                <i class="fas fa-video"></i> Camera Feed
+                            </div>
+                            <video id="videoFeed" autoplay playsinline></video>
+                        </div>
+                        <div class="camera-controls">
                             <button class="btn btn-primary" id="startCameraBtn">
                                 <i class="fas fa-play"></i> Start Camera
+                            </button>
+                            <button class="btn btn-warning" id="switchCameraBtn">
+                                <i class="fas fa-sync-alt"></i> Switch Camera
                             </button>
                             <button class="btn btn-success" id="captureBtn">
                                 <i class="fas fa-camera"></i> Capture
                             </button>
-                            <button class="btn btn-warning" id="downloadReportBtn">
-                                <i class="fas fa-download"></i> Download Report
-                            </button>
-                            <button class="btn btn-danger" id="previewReportBtn">
+                        </div>
+                        
+                        <div class="captured-image-container" id="capturedImageContainer">
+                            <div class="chart-title">
+                                <i class="fas fa-image"></i> Captured Image
+                            </div>
+                            <img id="capturedImage" class="captured-image" alt="Captured image">
+                        </div>
+                        
+                        <div class="controls">
+                            <button class="btn btn-primary" id="previewReportBtn">
                                 <i class="fas fa-eye"></i> Preview Report
+                            </button>
+                            <button class="btn btn-danger" id="downloadReportBtn">
+                                <i class="fas fa-download"></i> Download Report
                             </button>
                         </div>
                     </div>
@@ -1004,7 +981,7 @@
                             <div class="vital-icon vital-heart">
                                 <i class="fas fa-heartbeat"></i>
                             </div>
-                            <div class="vital-value">76</div>
+                            <div class="vital-value" id="cameraHeartRate">76</div>
                             <div class="vital-label">Heart Rate (BPM)</div>
                             <div class="vital-status status-normal">Normal</div>
                         </div>
@@ -1013,7 +990,7 @@
                             <div class="vital-icon vital-oxygen">
                                 <i class="fas fa-lungs"></i>
                             </div>
-                            <div class="vital-value">98%</div>
+                            <div class="vital-value" id="cameraOxygen">98%</div>
                             <div class="vital-label">Oxygen Level (%)</div>
                             <div class="vital-status status-normal">Optimal</div>
                         </div>
@@ -1158,7 +1135,7 @@
     </div>
     
     <div class="footer">
-      		  <p>Health Monitoring System © UniMAP IDP 2025 | All rights reserved</p>
+        <p>Health Monitoring System © UniMAP IDP 2025 | All rights reserved</p>
     </div>
 
    <!-- Updated PDF Preview Modal -->
@@ -1176,6 +1153,11 @@
             <h3>Patient Summary</h3>
             <p><strong>Name:</strong> <span class="input-field">__________</span></p>
             <p><strong>ID Number:</strong> <span class="input-field">__________</span></p>
+            
+            <h3>Captured Image</h3>
+            <div class="captured-image-container">
+                <img id="previewImage" class="captured-image" alt="Captured Image">
+            </div>
             
             <h3>Heart Rate History</h3>
             <div class="pdf-graph">
@@ -1198,7 +1180,6 @@
                 <p>Page 2: Detailed Analysis</p>
             </div>
             
-            <!-- Added real-time monitoring chart here -->
             <h3>Real-time Monitoring</h3>
             <div class="pdf-graph">
                 Real-time Monitoring Chart
@@ -1224,6 +1205,11 @@
                         <td>98%</td>
                         <td style="color:var(--success);">Optimal</td>
                     </tr>
+                    <tr>
+                        <td>Blood Pressure</td>
+                        <td>120/80 mmHg</td>
+                        <td style="color:var(--success);">Normal</td>
+                    </tr>
                 </tbody>
             </table>
             
@@ -1232,6 +1218,8 @@
                 <li>Continue current medication regimen</li>
                 <li>Follow up with cardiologist in 3 months</li>
                 <li>Maintain healthy lifestyle habits</li>
+                <li>Increase daily physical activity</li>
+                <li>Monitor blood pressure weekly</li>
             </ul>
             
             <div class="pdf-footer">
@@ -1240,31 +1228,19 @@
         </div>
     </div>
 </div>
-    <script>
 
-	    // Simulate real-time data changes
-		const firebaseConfig = {
-		      apiKey: "AIzaSyD0IfsKU-H3j7RImqcxzQxAVpEKpq6QywM",
-		      authDomain: "testing-b5fda.firebaseapp.com",
-		      projectId: "testing-b5fda",
-		      storageBucket: "testing-b5fda.appspot.com",
-		      messagingSenderId: "329100319947",
-		      appId: "1:329100319947:web:68538e4a7fda208b218f4e",
-		      measurementId: "G-3VK7XVTRD1",
-		      databaseURL: "https://testing-b5fda-default-rtdb.firebaseio.com"
-		    };
-		
-	    // Initialize Firebase
-	    firebase.initializeApp(firebaseConfig);
-	    const db = firebase.database();
-        // Global chart instances
-        let heartRateChartInstance, oxygenChartInstance, realtimeChartInstance;
+    <script>
+        // Global variables
+        let capturedImageData = null;
+        let stream = null;
+        let currentCamera = 'user'; // 'user' for front, 'environment' for back
+        let videoTrack = null;
         
         // Initialize Charts
         function initCharts() {
             // Heart Rate Chart
             const heartCtx = document.getElementById('heartRateChart').getContext('2d');
-            heartRateChartInstance = new Chart(heartCtx, {
+            new Chart(heartCtx, {
                 type: 'line',
                 data: {
                     labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
@@ -1297,95 +1273,28 @@
                 }
             });
             
-           // Oxygen Level Chart
-db.ref("savedmonitoringdata").once("value").then(snapshot => {
-  const rawData = snapshot.val();
-
-  const oxygenlabels = [];
-  const oxygendata = [];
-
-  for (let key in rawData) {
-    const entry = rawData[key];
-    const timestamp = entry.timestamp;  // e.g., "22/06/2025 5:05 PM"
-    const oxygen = entry.oxygen;
-
-    // Extract just the time part: "5:05 PM"
-    const timeLabel = timestamp.split(" ")[1] + " " + timestamp.split(" ")[2];
-
-    oxygenlabels.push(timeLabel);
-    oxygendata.push(oxygen);
-  }
-
-  // ✅ CREATE CHART AFTER data is ready
-  const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
-  const oxygenChartInstance = new Chart(oxygenCtx, {
-    type: 'line',
-    data: {
-      labels: oxygenlabels,
-      datasets: [{
-        label: 'Oxygen Level (%)',
-        data: oxygendata,
-        borderColor: '#3498db',
-        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-        tension: 0.4,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          min: 90,
-          max: 100,
-          grid: {
-            color: 'rgba(0, 0, 0, 0.05)'
-          }
-        },
-        x: {
-          grid: {
-            display: false
-          }
-        }
-      }
-    }
-  });
-
-}).catch(error => {
-  console.error("Error fetching data:", error);
-});
-
-            
-            // Real-time Chart
-            const realtimeCtx = document.getElementById('realtimeChart').getContext('2d');
-            realtimeChartInstance = new Chart(realtimeCtx, {
+            // Oxygen Level Chart
+            const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
+            new Chart(oxygenCtx, {
                 type: 'line',
                 data: {
-                    labels: ['', '', '', '', '', '', '', '', '', ''],
-                    datasets: [
-                        {
-                            label: 'Heart Rate',
-                            data: [72, 74, 73, 75, 76, 74, 73, 72, 74, 75],
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        },
-                        {
-                            label: 'Oxygen Level',
-                            data: [98, 97, 98, 97, 96, 97, 98, 97, 96, 97],
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }
-                    ]
+                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
+                    datasets: [{
+                        label: 'Oxygen Level (%)',
+                        data: [98, 97, 98, 97, 96, 97],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         y: {
+                            min: 90,
+                            max: 100,
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.05)'
                             }
@@ -1398,6 +1307,80 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
                     }
                 }
             });
+        }
+        
+        // Start camera function
+        async function startCamera(facingMode = 'user') {
+            try {
+                const constraints = {
+                    video: { facingMode: facingMode }
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('videoFeed');
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                // Hide placeholder
+                document.getElementById('cameraPlaceholder').style.display = 'none';
+                
+                // Store the track
+                videoTrack = stream.getVideoTracks()[0];
+                
+                // Update UI
+                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                document.getElementById('startCameraBtn').classList.remove('btn-primary');
+                document.getElementById('startCameraBtn').classList.add('btn-danger');
+                
+                return true;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                alert('Could not access the camera. Please make sure you have granted permission.');
+                return false;
+            }
+        }
+        
+        // Stop camera function
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                
+                const video = document.getElementById('videoFeed');
+                video.style.display = 'none';
+                document.getElementById('cameraPlaceholder').style.display = 'flex';
+                
+                // Update UI
+                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-play"></i> Start Camera';
+                document.getElementById('startCameraBtn').classList.remove('btn-danger');
+                document.getElementById('startCameraBtn').classList.add('btn-primary');
+            }
+        }
+        
+        // Capture image function
+        function captureImage() {
+            if (!stream) {
+                alert('Please start the camera first!');
+                return;
+            }
+            
+            const video = document.getElementById('videoFeed');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL
+            capturedImageData = canvas.toDataURL('image/jpeg');
+            
+            // Display captured image
+            const capturedImage = document.getElementById('capturedImage');
+            capturedImage.src = capturedImageData;
+            document.getElementById('capturedImageContainer').style.display = 'block';
+            
+            // Scroll to captured image
+            capturedImageContainer.scrollIntoView({ behavior: 'smooth' });
         }
         
         // Navigation System
@@ -1452,132 +1435,73 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
             document.getElementById('logoutBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 alert('Logging out... Redirecting to login page.');
-		window.location.href = 'login.html'; // Redirect to login page
+                // In a real app, you would redirect to login page
+                // window.location.href = 'login.html';
             });
             
-            
-
-		
-db.ref("savedmonitoringdata").once("value").then(snapshot => {
-  const rawData = snapshot.val();
-  const bpData = [];
-  const spo2Data = [];
-  const labels = [];
-
-  for (let key in rawData) {
-    const entry = rawData[key];
-    bpData.push(parseFloat(entry.bp));
-    spo2Data.push(parseFloat(entry.oxygen));
-    labels.push(entry.timestamp);
-  }
-
-  chart.data.labels = labels;
-  chart.data.datasets[0].data = bpData;
-  chart.data.datasets[1].data = spo2Data;
-  chart.update();
-
-  document.getElementById("bpm").textContent = bpData[bpData.length - 1];
-  document.getElementById("spo2").textContent = spo2Data[spo2Data.length - 1];
-  document.getElementById("timestamp").textContent = labels[labels.length - 1];
-});
-
-
-
-		
-/*
+            // Simulate vital signs data
             setInterval(() => {
                 const heartValue = document.getElementById('currentHeartRate');
                 const oxygenValue = document.getElementById('currentOxygen');
+                const cameraHeart = document.getElementById('cameraHeartRate');
+                const cameraOxygen = document.getElementById('cameraOxygen');
                 
                 // Generate random values within normal ranges
                 const newHeart = Math.floor(Math.random() * 10) + 70;
                 const newOxygen = Math.floor(Math.random() * 3) + 96;
                 
-                heartValue.textContent = fbnewHeart;
-                oxygenValue.textContent = fbnewOxygen;
-
-		    
-
-            }, 5000);*/
+                heartValue.textContent = newHeart;
+                oxygenValue.textContent = newOxygen + '%';
+                cameraHeart.textContent = newHeart;
+                cameraOxygen.textContent = newOxygen + '%';
+            }, 5000);
             
-             // Camera controls
+            // Camera controls
             const startCameraBtn = document.getElementById('startCameraBtn');
+            const switchCameraBtn = document.getElementById('switchCameraBtn');
             const captureBtn = document.getElementById('captureBtn');
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
-            const cameraFeed = document.getElementById('cameraFeed');
-            const cameraCanvas = document.getElementById('cameraCanvas');
-
-            let cameraStream = null;
+            
             let cameraActive = false;
-
-           async function startCamera() {
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: { ideal: "environment" } // back camera on phones
-            },
-            audio: false
-        });
-        cameraFeed.srcObject = cameraStream;
-        cameraActive = true;
-    } catch (err) {
-        alert("Error accessing camera: " + err.message);
-    }
-}
-
-
-            function stopCamera() {
-                if (cameraStream) {
-                    cameraStream.getTracks().forEach(track => track.stop());
-                    cameraFeed.srcObject = null;
-                    cameraActive = false;
-                }
-            }
-
-            startCameraBtn.addEventListener('click', function () {
+            
+            startCameraBtn.addEventListener('click', async function() {
                 if (cameraActive) {
                     stopCamera();
-                    this.innerHTML = '<i class="fas fa-play"></i> Start Camera';
-                    this.classList.remove('btn-danger');
-                    this.classList.add('btn-primary');
-                    captureBtn.disabled = true;
+                    cameraActive = false;
                 } else {
-                    startCamera();
-                    this.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
-                    this.classList.remove('btn-primary');
-                    this.classList.add('btn-danger');
-                    captureBtn.disabled = false;
+                    cameraActive = await startCamera(currentCamera);
                 }
             });
-
-            captureBtn.addEventListener('click', function () {
-                if (!cameraActive) return;
-                const context = cameraCanvas.getContext('2d');
-                cameraCanvas.width = cameraFeed.videoWidth;
-                cameraCanvas.height = cameraFeed.videoHeight;
-                context.drawImage(cameraFeed, 0, 0, cameraCanvas.width, cameraCanvas.height);
-                alert('Image captured successfully! Analysis in progress...');
-            });
-
-            previewReportBtn.addEventListener('click', function () {
-                if (cameraCanvas.toDataURL() === '') {
-                    alert('No image captured yet!');
+            
+            // Switch camera function
+            switchCameraBtn.addEventListener('click', async function() {
+                if (!cameraActive) {
+                    alert('Please start the camera first!');
                     return;
                 }
-                const previewWindow = window.open();
-                previewWindow.document.write('<img src="' + cameraCanvas.toDataURL('image/png') + '" />');
+                
+                // Toggle camera
+                currentCamera = currentCamera === 'user' ? 'environment' : 'user';
+                
+                // Restart camera with new facing mode
+                stopCamera();
+                cameraActive = await startCamera(currentCamera);
             });
-
-            downloadReportBtn.addEventListener('click', function () {
-                const link = document.createElement('a');
-                link.download = 'captured_image.png';
-                link.href = cameraCanvas.toDataURL('image/png');
-                link.click();
+            
+            captureBtn.addEventListener('click', function() {
+                captureImage();
             });
             
             // Preview report functionality
             previewReportBtn.addEventListener('click', function() {
+                if (!capturedImageData) {
+                    alert('Please capture an image first!');
+                    return;
+                }
+                
+                // Set the preview image
+                document.getElementById('previewImage').src = capturedImageData;
                 document.getElementById('pdfModal').style.display = 'flex';
             });
             
@@ -1586,8 +1510,13 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
                 document.getElementById('pdfModal').style.display = 'none';
             });
             
-            // Download report functionality with graphs in two pages
+            // Download report functionality
             downloadReportBtn.addEventListener('click', function() {
+                if (!capturedImageData) {
+                    alert('Please capture an image first!');
+                    return;
+                }
+                
                 // Using jsPDF to generate a PDF report
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
@@ -1613,18 +1542,15 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
                 doc.text('Name: __________', 20, 55);
                 doc.text('ID Number: __________', 20, 65);
                 
-                // Convert charts to images
-                const heartRateImage = heartRateChartInstance.toBase64Image();
-                const oxygenImage = oxygenChartInstance.toBase64Image();
-                const realtimeImage = realtimeChartInstance.toBase64Image();
+                // Add captured image
+                doc.setFontSize(16);
+                doc.text('Captured Image', 20, 75);
+                doc.addImage(capturedImageData, 'JPEG', 20, 80, 170, 100);
                 
-                // Add heart rate chart to page 1
-                doc.text('Heart Rate History', 20, 75);
-                doc.addImage(heartRateImage, 'JPEG', 20, 80, 170, 80);
-                
-                // Add oxygen chart to page 1
-                doc.text('Oxygen Level History', 20, 165);
-                doc.addImage(oxygenImage, 'JPEG', 20, 170, 170, 80);
+                // Add heart rate chart
+                doc.setFontSize(16);
+                doc.text('Heart Rate History', 20, 185);
+                doc.addImage(document.getElementById('heartRateChart').toDataURL(), 'JPEG', 20, 190, 170, 80);
                 
                 // Add page number
                 doc.setFontSize(10);
@@ -1643,22 +1569,20 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
                 doc.setDrawColor(52, 152, 219);
                 doc.line(20, 35, 190, 35);
                 
-                // Add real-time monitoring chart
+                // Add oxygen chart
                 doc.setFontSize(16);
-                doc.setTextColor(0);
-                doc.text('Real-time Monitoring', 20, 45);
-                doc.setDrawColor(52, 152, 219);
-                doc.line(20, 35, 190, 35);
-
+                doc.text('Oxygen Level History', 20, 45);
+                doc.addImage(document.getElementById('oxygenChart').toDataURL(), 'JPEG', 20, 50, 170, 80);
                 
-                // Add vital signs summary (only heart rate and oxygen level)
+                // Add vital signs summary
                 doc.setFontSize(16);
                 doc.text('Vital Signs Summary', 20, 135);
                 
                 // Create table for vital signs
                 const vitalData = [
-                    { parameter: 'Heart Rate', value: '72 bpm', status: 'Normal' },
-                    { parameter: 'Oxygen Level', value: '98%', status: 'Optimal' }
+                    { parameter: 'Heart Rate', value: document.getElementById('currentHeartRate').textContent, status: 'Normal' },
+                    { parameter: 'Oxygen Level', value: document.getElementById('currentOxygen').textContent, status: 'Optimal' },
+                    { parameter: 'Blood Pressure', value: '120/80 mmHg', status: 'Normal' }
                 ];
                 
                 // Table headers
@@ -1692,13 +1616,21 @@ db.ref("savedmonitoringdata").once("value").then(snapshot => {
                 // Add health recommendations
                 doc.setFontSize(16);
                 doc.setTextColor(0);
-                doc.text('Health Recommendations', 20, 180);
+                doc.text('Health Recommendations', 20, 190);
                 
-                doc.setFontSize(12);
-                doc.setTextColor(0);
-                doc.text('- Continue current medication regimen', 20, 190);
-                doc.text('- Follow up with cardiologist in 3 months', 20, 200);
-                doc.text('- Maintain healthy lifestyle habits', 20, 210);
+                const recommendations = [
+                    "Continue current medication regimen",
+                    "Follow up with cardiologist in 3 months",
+                    "Maintain healthy lifestyle habits",
+                    "Increase daily physical activity",
+                    "Monitor blood pressure weekly"
+                ];
+                
+                recommendations.forEach((rec, index) => {
+                    doc.setFontSize(12);
+                    doc.setTextColor(0);
+                    doc.text(`- ${rec}`, 20, 200 + (index * 7));
+                });
                 
                 // Add page number
                 doc.setFontSize(10);

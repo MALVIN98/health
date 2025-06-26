@@ -1328,7 +1328,7 @@
        async function startCamera(facingMode = 'user') {
     try {
         const constraints = {
-            video: { facingMode: facingMode },
+            video: { deviceId: cameras[0].deviceId },
             audio: true
         };
 
@@ -1351,9 +1351,10 @@
 
         return true;
     } catch (err) {
-        console.error("Error accessing camera: ", err);
-        alert('Could not access the camera. Please make sure you have granted permission.');
-        return false;
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('Your browser does not support camera access.');
+    return false;
+}
     }
 }
 
@@ -1480,6 +1481,8 @@
             const captureBtn = document.getElementById('captureBtn');
             const toggleSoundBtn = document.getElementById('toggleSoundBtn');
             const soundIcon = document.getElementById('soundIcon');
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const cameras = devices.filter(d => d.kind === 'videoinput');
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
 

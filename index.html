@@ -1328,13 +1328,15 @@
         async function startCamera(facingMode = 'user') {
             try {
                 const constraints = {
-                    video: { facingMode: facingMode }
-                };
+                    video: { facingMode: facingMode },
+                    audio: true
+            };
                 
                 stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const video = document.getElementById('videoFeed');
                 video.srcObject = stream;
                 video.style.display = 'block';
+                video.muted = !soundEnabled;
                 
                 // Hide placeholder
                 document.getElementById('cameraPlaceholder').style.display = 'none';

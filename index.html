@@ -554,7 +554,7 @@
             color: #7f8c8d;
         }
 
-         .sound-toggle {
+        .sound-toggle {
             position: absolute;
             bottom: 10px;
             right: 10px;
@@ -568,7 +568,6 @@
             cursor: pointer;
             z-index: 10;
         }
-
 
         .disclaimer i {
             color: var(--warning);
@@ -836,7 +835,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="login.html" class="nav-link" id="logoutBtn">
+                    <a href="#" class="nav-link" id="logoutBtn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
@@ -876,8 +875,7 @@
                         </div>
                         <div class="card-footer">SpO2 • Optimal</div>
                     </div>
-                    
-                   <!--
+                     <!--
                     <div class="card">
                         <div class="card-header">
                             <div>
@@ -890,7 +888,7 @@
                         </div>
                         <div class="card-footer">Metformin • 500mg</div>
                     </div> -->
-                </div>
+                </div> 
                 
                 <div class="charts-container">
                     <div class="chart-card">
@@ -1167,7 +1165,7 @@
         
         <div class="pdf-page">
             <div class="pdf-header">
-                <h1>Health Report</h1>
+                <h1>Health Patient Report</h1>
                 <p>Generated on: <span id="reportDate"></span></p>
             </div>
             
@@ -1197,7 +1195,7 @@
         
         <div class="pdf-page">
             <div class="pdf-header">
-                <h1>Health Monitoring Report</h1>
+                <h1>HealthAI Patient Report</h1>
                 <p>Page 2: Detailed Analysis</p>
             </div>
             
@@ -1226,6 +1224,11 @@
                         <td>98%</td>
                         <td style="color:var(--success);">Optimal</td>
                     </tr>
+                    <tr>
+                        <td>Blood Pressure</td>
+                        <td>120/80 mmHg</td>
+                        <td style="color:var(--success);">Normal</td>
+                    </tr>
                 </tbody>
             </table>
             
@@ -1235,6 +1238,7 @@
                 <li>Follow up with cardiologist in 3 months</li>
                 <li>Maintain healthy lifestyle habits</li>
                 <li>Increase daily physical activity</li>
+                <li>Monitor blood pressure weekly</li>
             </ul>
             
             <div class="pdf-footer">
@@ -1325,39 +1329,35 @@
         }
         
         // Start camera function
-       async function startCamera(facingMode = 'user') {
-    try {
-        const constraints = {
-            video: { deviceId: cameras[0].deviceId },
-            audio: true
-        };
-
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-        const video = document.getElementById('videoFeed');
-        video.srcObject = stream;
-        video.muted = !soundEnabled; // dynamic control
-        video.style.display = 'block';
-
-        document.getElementById('cameraPlaceholder').style.display = 'none';
-        videoTrack = stream.getVideoTracks()[0];
-
-        // Update UI
-        document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
-        document.getElementById('startCameraBtn').classList.remove('btn-primary');
-        document.getElementById('startCameraBtn').classList.add('btn-danger');
-
-        console.log("Audio tracks:", stream.getAudioTracks());
-
-        return true;
-    } catch (err) {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    alert('Your browser does not support camera access.');
-    return false;
-}
-    }
-}
-
+        async function startCamera(facingMode = 'user') {
+            try {
+                const constraints = {
+                    video: { facingMode: facingMode }
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('videoFeed');
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                // Hide placeholder
+                document.getElementById('cameraPlaceholder').style.display = 'none';
+                
+                // Store the track
+                videoTrack = stream.getVideoTracks()[0];
+                
+                // Update UI
+                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                document.getElementById('startCameraBtn').classList.remove('btn-primary');
+                document.getElementById('startCameraBtn').classList.add('btn-danger');
+                
+                return true;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                alert('Could not access the camera. Please make sure you have granted permission.');
+                return false;
+            }
+        }
         
         // Stop camera function
         function stopCamera() {
@@ -1455,10 +1455,10 @@
                 e.preventDefault();
                 alert('Logging out... Redirecting to login page.');
                 // In a real app, you would redirect to login page
-                 window.location.href = 'login.html';
+                // window.location.href = 'login.html';
             });
             
-          /*  // Simulate vital signs data
+            // Simulate vital signs data
             setInterval(() => {
                 const heartValue = document.getElementById('currentHeartRate');
                 const oxygenValue = document.getElementById('currentOxygen');
@@ -1473,19 +1473,16 @@
                 oxygenValue.textContent = newOxygen + '%';
                 cameraHeart.textContent = newHeart;
                 cameraOxygen.textContent = newOxygen + '%';
-            }, 5000);*/
+            }, 5000);
             
             // Camera controls
             const startCameraBtn = document.getElementById('startCameraBtn');
             const switchCameraBtn = document.getElementById('switchCameraBtn');
-            const captureBtn = document.getElementById('captureBtn');
             const toggleSoundBtn = document.getElementById('toggleSoundBtn');
             const soundIcon = document.getElementById('soundIcon');
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const cameras = devices.filter(d => d.kind === 'videoinput');
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
-
+            
             let soundEnabled = true;
 
                 toggleSoundBtn.addEventListener('click', () => {
@@ -1508,7 +1505,6 @@
                     }
                 });
 
-            
             let cameraActive = false;
             
             startCameraBtn.addEventListener('click', async function() {

@@ -1325,37 +1325,38 @@
         }
         
         // Start camera function
-        async function startCamera(facingMode = 'user') {
-            try {
-                const constraints = {
-                    video: { facingMode: facingMode },
-                    audio: true
-            };
-                
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('videoFeed');
-                video.srcObject = stream;
-                video.style.display = 'block';
-                video.muted = !soundEnabled;
-                
-                // Hide placeholder
-                document.getElementById('cameraPlaceholder').style.display = 'none';
-                
-                // Store the track
-                videoTrack = stream.getVideoTracks()[0];
-                
-                // Update UI
-                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
-                document.getElementById('startCameraBtn').classList.remove('btn-primary');
-                document.getElementById('startCameraBtn').classList.add('btn-danger');
-                
-                return true;
-            } catch (err) {
-                console.error("Error accessing camera: ", err);
-                alert('Could not access the camera. Please make sure you have granted permission.');
-                return false;
-            }
-        }
+       async function startCamera(facingMode = 'user') {
+    try {
+        const constraints = {
+            video: { facingMode: facingMode },
+            audio: true
+        };
+
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        const video = document.getElementById('videoFeed');
+        video.srcObject = stream;
+        video.muted = !soundEnabled; // dynamic control
+        video.style.display = 'block';
+
+        document.getElementById('cameraPlaceholder').style.display = 'none';
+        videoTrack = stream.getVideoTracks()[0];
+
+        // Update UI
+        document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+        document.getElementById('startCameraBtn').classList.remove('btn-primary');
+        document.getElementById('startCameraBtn').classList.add('btn-danger');
+
+        console.log("Audio tracks:", stream.getAudioTracks());
+
+        return true;
+    } catch (err) {
+        console.error("Error accessing camera: ", err);
+        alert('Could not access the camera. Please make sure you have granted permission.');
+        return false;
+    }
+}
+
         
         // Stop camera function
         function stopCamera() {

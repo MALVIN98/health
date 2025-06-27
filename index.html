@@ -1224,11 +1224,7 @@
                         <td>98%</td>
                         <td style="color:var(--success);">Optimal</td>
                     </tr>
-                    <tr>
-                        <td>Blood Pressure</td>
-                        <td>120/80 mmHg</td>
-                        <td style="color:var(--success);">Normal</td>
-                    </tr>
+                  
                 </tbody>
             </table>
             
@@ -1333,7 +1329,7 @@
             try {
                 const constraints = {
                     video: { facingMode: facingMode }
-                    audio: true
+                    
                 };
                 
                 stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -1343,7 +1339,7 @@
                 
                 // Hide placeholder
                 document.getElementById('cameraPlaceholder').style.display = 'none';
-                videoTrack = stream.getVideoTracks()[0];
+                
                 
                 // Store the track
                 videoTrack = stream.getVideoTracks()[0];

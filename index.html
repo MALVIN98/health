@@ -960,7 +960,7 @@
                             <div class="video-placeholder" id="cameraPlaceholder">
                                 <i class="fas fa-video"></i> Camera Feed
                             </div>
-                            <video id="videoFeed" autoplay playsinline muted></video>
+                            <video id="videoFeed" autoplay playsinline></video>
                             <!-- Sound toggle button -->
                                 <button id="toggleSoundBtn" class="sound-toggle">
                                     <i class="fas fa-volume-up" id="soundIcon"></i>
@@ -1245,11 +1245,6 @@
 </div>
 
     <script>
-        // Global variables
-        let capturedImageData = null;
-        let stream = null;
-        let currentCamera = 'user'; // 'user' for front, 'environment' for back
-        let videoTrack = null;
         
         // Initialize Charts
         function initCharts() {
@@ -1324,11 +1319,19 @@
             });
         }
         
+        // Global variables
+        let capturedImageData = null;
+        let stream = null;
+        let currentCamera = 'user'; // 'user' for front, 'environment' for back
+        let videoTrack = null;
+        
+
         // Start camera function
         async function startCamera(facingMode = 'user') {
             try {
                 const constraints = {
-                    video: { facingMode: facingMode }
+                    video: { facingMode: facingMode },
+                    audio: true // Request microphone access
                     
                 };
                 
@@ -1450,6 +1453,8 @@
                 });
             });
             
+       
+
             // Logout functionality
             document.getElementById('logoutBtn').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1483,6 +1488,17 @@
             const downloadReportBtn = document.getElementById('downloadReportBtn');
             const previewReportBtn = document.getElementById('previewReportBtn');
             
+            let cameraActive = false;
+            
+            startCameraBtn.addEventListener('click', async function() {
+                if (cameraActive) {
+                    stopCamera();
+                    cameraActive = false;
+                } else {
+                    cameraActive = await startCamera(currentCamera);
+                }
+            });
+
             let soundEnabled = true;
 
                 toggleSoundBtn.addEventListener('click', () => {
@@ -1505,16 +1521,7 @@
                     }
                 });
 
-            let cameraActive = false;
             
-            startCameraBtn.addEventListener('click', async function() {
-                if (cameraActive) {
-                    stopCamera();
-                    cameraActive = false;
-                } else {
-                    cameraActive = await startCamera(currentCamera);
-                }
-            });
             
             // Switch camera function
             switchCameraBtn.addEventListener('click', async function() {

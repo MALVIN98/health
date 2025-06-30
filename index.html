@@ -1249,7 +1249,7 @@
 </div>
 
     <script>
-        const firebaseConfig = {
+    const firebaseConfig = {
     apiKey: "AIzaSyAzKOK6x25R0RMfV7y-2hocNMd2RvrC2J0",
     authDomain: "testing-b5fda.firebaseapp.com",
     databaseURL: "https://testing-b5fda-default-rtdb.firebaseio.com",
@@ -1289,82 +1289,97 @@
     } else {
       oxygenFooter.textContent = "SpO2 • Optimal";
     }
+
+    // ✅ LIVE CHART UPDATE (MUST BE inside this if-block)
+    const now = new Date();
+    const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+    // Heart Rate Chart Update
+    if (heartRateChartInstance) {
+        heartRateChartInstance.data.labels.push(timeLabel);
+        heartRateChartInstance.data.datasets[0].data.push(data.bp);
+
+        if (heartRateChartInstance.data.labels.length > 10) {
+            heartRateChartInstance.data.labels.shift();
+            heartRateChartInstance.data.datasets[0].data.shift();
+        }
+        heartRateChartInstance.update();
+    }
+
+    // Oxygen Chart Update
+    if (oxygenChartInstance) {
+        oxygenChartInstance.data.labels.push(timeLabel);
+        oxygenChartInstance.data.datasets[0].data.push(data.oxygen);
+
+        if (oxygenChartInstance.data.labels.length > 10) {
+            oxygenChartInstance.data.labels.shift();
+            oxygenChartInstance.data.datasets[0].data.shift();
+        }
+        oxygenChartInstance.update();
+    }
   }
 });
+
+
         
         // Initialize Charts
+        let heartRateChartInstance;
+        let oxygenChartInstance;
         function initCharts() {
-            // Heart Rate Chart
-            const heartCtx = document.getElementById('heartRateChart').getContext('2d');
-            new Chart(heartCtx, {
-                type: 'line',
-                data: {
-                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
-                    datasets: [{
-                        label: 'Heart Rate (bpm)',
-                        data: [72, 75, 78, 76, 80, 75],
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 60,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
+    const heartCtx = document.getElementById('heartRateChart').getContext('2d');
+    const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
+
+    heartRateChartInstance = new Chart(heartCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Heart Rate (bpm)',
+                data: [],
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 60,
+                    max: 120
                 }
-            });
-            
-            // Oxygen Level Chart
-            const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
-            new Chart(oxygenCtx, {
-                type: 'line',
-                data: {
-                    labels: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
-                    datasets: [{
-                        label: 'Oxygen Level (%)',
-                        data: [98, 97, 98, 97, 96, 97],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 90,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
+            }
         }
-        
+    });
+
+    oxygenChartInstance = new Chart(oxygenCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Oxygen Level (%)',
+                data: [],
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 85,
+                    max: 100
+                }
+            }
+        }
+    });
+}
+
         // Global variables
         let capturedImageData = null;
         let stream = null;

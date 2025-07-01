@@ -1220,13 +1220,13 @@
                 <tbody>
                     <tr>
                         <td>Heart Rate</td>
-                        <td>72 bpm</td>
-                        <td style="color:var(--success);">Normal</td>
+                        <td> bpm</td>
+                        <td style="color:var(--success);"></td>
                     </tr>
                     <tr>
                         <td>Oxygen Level</td>
-                        <td>98%</td>
-                        <td style="color:var(--success);">Optimal</td>
+                        <td>%</td>
+                        <td style="color:var(--success);"></td>
                     </tr>
                   
                 </tbody>
@@ -1250,514 +1250,533 @@
 
     <script>
     const firebaseConfig = {
-    apiKey: "AIzaSyAzKOK6x25R0RMfV7y-2hocNMd2RvrC2J0",
-    authDomain: "testing-b5fda.firebaseapp.com",
-    databaseURL: "https://testing-b5fda-default-rtdb.firebaseio.com",
-    projectId: "testing-b5fda",
-    storageBucket: "testing-b5fda.appspot.com",
-    messagingSenderId: "85960821209", // optional
-    appId: "1:85960821209:web:xxxxxxxxxxxxxx" // optional
-  };
+        apiKey: "AIzaSyAzKOK6x25R0RMfV7y-2hocNMd2RvrC2J0",
+        authDomain: "testing-b5fda.firebaseapp.com",
+        databaseURL: "https://testing-b5fda-default-rtdb.firebaseio.com",
+        projectId: "testing-b5fda",
+        storageBucket: "testing-b5fda.appspot.com",
+        messagingSenderId: "85960821209",
+        appId: "1:85960821209:web:xxxxxxxxxxxxxx"
+    };
 
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-  // Live update from /monitoring
-   database.ref("health").on("value", (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    // Update heart rate and oxygen values
-   document.getElementById("currentHeartRate").textContent = data.heartRate + " bpm";
-   document.getElementById("currentOxygen").textContent = data.spo2 + "%";
+    // Live update from Firebase
+    database.ref("health").on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            const heartRate = data.heartRate;
+            const spo2 = data.spo2;
 
-     // Update heart rate status
-  const heartFooter = document.querySelector('#currentHeartRate').closest('.card').querySelector('.card-footer');
-  if (data.heartRate < 60) {
-    heartFooter.textContent = "bpm • Low";
-  } else if (data.heartRate <= 100) {
-    heartFooter.textContent = "bpm • Normal";
-  } else {
-    heartFooter.textContent = "bpm • High";
-  }
+            // Update heart rate and oxygen values
+            document.getElementById("currentHeartRate").textContent = data.heartRate + " bpm";
+            document.getElementById("currentOxygen").textContent = data.spo2 + "%";
 
-  // Update SpO2 status
-  const oxygenFooter = document.querySelector('#currentOxygen').closest('.card').querySelector('.card-footer');
-  if (data.spo2 < 90) {
-    oxygenFooter.textContent = "SpO2 • Lower";
-  } else if (data.spo2 <= 94) {
-    oxygenFooter.textContent = "SpO2 • Normal";
-  } else {
-    oxygenFooter.textContent = "SpO2 • Optimal";
-  }
+            // Camera section updates
+            document.getElementById("cameraHeartRate").textContent = data.heartRate + " bpm";
+            document.getElementById("cameraOxygen").textContent = data.spo2 + "%";
 
+            // Update heart rate status
+            const heartFooter = document.querySelector('#currentHeartRate').closest('.card').querySelector('.card-footer');
+            let heartStatus = "";
+            if (heartRate < 60) {
+                heartFooter.textContent = "bpm • Low";
+                heartStatus = "Low";
+            } else if (heartRate <= 100) {
+                heartFooter.textContent = "bpm • Normal";
+                heartStatus = "Normal";
+            } else {
+                heartFooter.textContent = "bpm • High";
+                heartStatus = "High";
+            }
 
-      // ✅ LIVE CHART UPDATE (MUST BE inside this if-block)
-    const now = new Date();
-    const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
+            // Update SpO2 status
+            const oxygenFooter = document.querySelector('#currentOxygen').closest('.card').querySelector('.card-footer');
+            let spo2Status = "";
+            if (spo2 < 90) {
+                oxygenFooter.textContent = "SpO2 • Lower";
+                spo2Status = "Lower";
+            } else if (spo2 <= 94) {
+                oxygenFooter.textContent = "SpO2 • Normal";
+                spo2Status = "Normal";
+            } else {
+                oxygenFooter.textContent = "SpO2 • Optimal";
+                spo2Status = "Optimal";
+            }
 
-    // Heart Rate Chart Update
-    if (heartRateChartInstance) {
-    heartRateChartInstance.data.labels.push(timeLabel);
-    heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
-    if (heartRateChartInstance.data.labels.length > 10) {
-      heartRateChartInstance.data.labels.shift();
-      heartRateChartInstance.data.datasets[0].data.shift();
-    }
-    heartRateChartInstance.update();
-  }
+            // Camera Status Updates
+            const heartStatusEl = document.querySelector('#cameraHeartRate').closest('.vital-card').querySelector('.vital-status');
+            const oxygenStatusEl = document.querySelector('#cameraOxygen').closest('.vital-card').querySelector('.vital-status');
 
-    // Oxygen Chart Update
-     if (oxygenChartInstance) {
-    oxygenChartInstance.data.labels.push(timeLabel);
-    oxygenChartInstance.data.datasets[0].data.push(data.spo2);
-    if (oxygenChartInstance.data.labels.length > 10) {
-      oxygenChartInstance.data.labels.shift();
-      oxygenChartInstance.data.datasets[0].data.shift();
-    }
-    oxygenChartInstance.update();
-  }
-}
-});
+            heartStatusEl.textContent = heartStatus;
+            heartStatusEl.className = "vital-status " + (heartStatus === "Normal" ? "status-normal" : "status-warning");
 
+            oxygenStatusEl.textContent = spo2Status;
+            oxygenStatusEl.className = "vital-status " + (spo2Status === "Optimal" ? "status-normal" : "status-warning");
 
-        
-        // Initialize Charts
-        let heartRateChartInstance;
-        let oxygenChartInstance;
-        function initCharts() {
-    const heartCtx = document.getElementById('heartRateChart').getContext('2d');
-    const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
+            // Store for PDF use
+            window.latestVitals = {
+                heartRate: heartRate + " bpm",
+                spo2: spo2 + "%",
+                heartStatus,
+                spo2Status
+            };
 
-    heartRateChartInstance = new Chart(heartCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Heart Rate (bpm)',
-                data: [],
-                borderColor: '#e74c3c',
-                backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    min: 60,
-                    max: 120
+            // Update charts
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+            // Heart Rate Chart Update
+            if (heartRateChartInstance) {
+                heartRateChartInstance.data.labels.push(timeLabel);
+                heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
+                if (heartRateChartInstance.data.labels.length > 10) {
+                    heartRateChartInstance.data.labels.shift();
+                    heartRateChartInstance.data.datasets[0].data.shift();
                 }
+                heartRateChartInstance.update();
+            }
+
+            // Oxygen Chart Update
+            if (oxygenChartInstance) {
+                oxygenChartInstance.data.labels.push(timeLabel);
+                oxygenChartInstance.data.datasets[0].data.push(data.spo2);
+                if (oxygenChartInstance.data.labels.length > 10) {
+                    oxygenChartInstance.data.labels.shift();
+                    oxygenChartInstance.data.datasets[0].data.shift();
+                }
+                oxygenChartInstance.update();
             }
         }
     });
 
-    oxygenChartInstance = new Chart(oxygenCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Oxygen Level (%)',
-                data: [],
-                borderColor: '#3498db',
-                backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    min: 85,
-                    max: 100
+    // Initialize Charts
+    let heartRateChartInstance;
+    let oxygenChartInstance;
+
+    function initCharts() {
+        const heartCtx = document.getElementById('heartRateChart').getContext('2d');
+        const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
+
+        heartRateChartInstance = new Chart(heartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Heart Rate (bpm)',
+                    data: [],
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 60,
+                        max: 120
+                    }
                 }
             }
-        }
-    });
-}
+        });
 
-        // Global variables
-        let capturedImageData = null;
-        let stream = null;
-        let currentCamera = 'user'; // 'user' for front, 'environment' for back
-        let videoTrack = null;
-        
-
-        // Start camera function
-        async function startCamera(facingMode = 'user') {
-            try {
-                const constraints = {
-                    video: { facingMode: facingMode },
-                    audio: true // Request microphone access
-                    
-                };
-                
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('videoFeed');
-                video.srcObject = stream;
-                video.style.display = 'block';
-                
-                // Hide placeholder
-                document.getElementById('cameraPlaceholder').style.display = 'none';
-                
-                
-                // Store the track
-                videoTrack = stream.getVideoTracks()[0];
-                
-                // Update UI
-                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
-                document.getElementById('startCameraBtn').classList.remove('btn-primary');
-                document.getElementById('startCameraBtn').classList.add('btn-danger');
-
-                console.log("Audio tracks:", stream.getAudioTracks());
-                
-                return true;
-            } catch (err) {
-                console.error("Error accessing camera: ", err);
-                alert('Could not access the camera. Please make sure you have granted permission.');
-                return false;
+        oxygenChartInstance = new Chart(oxygenCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Oxygen Level (%)',
+                    data: [],
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 85,
+                        max: 100
+                    }
+                }
             }
-        }
+        });
+    }
+
+    // Global variables
+    let capturedImageData = null;
+    let stream = null;
+    let currentCamera = 'user'; // 'user' for front, 'environment' for back
+    let videoTrack = null;
+
+    // Start camera function
+    async function startCamera(facingMode = 'user') {
+        try {
+            const constraints = {
+                video: { facingMode: facingMode }
+            };
         
-        // Stop camera function
-        function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-                
-                const video = document.getElementById('videoFeed');
-                video.style.display = 'none';
-                document.getElementById('cameraPlaceholder').style.display = 'flex';
-                
-                // Update UI
-                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-play"></i> Start Camera';
-                document.getElementById('startCameraBtn').classList.remove('btn-danger');
-                document.getElementById('startCameraBtn').classList.add('btn-primary');
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+            const video = document.getElementById('videoFeed');
+            video.srcObject = stream;
+            video.style.display = 'block';
+            video.muted = true;
+            
+            document.getElementById('cameraPlaceholder').style.display = 'none';
+            videoTrack = stream.getVideoTracks()[0];
+            
+            document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+            document.getElementById('startCameraBtn').classList.remove('btn-primary');
+            document.getElementById('startCameraBtn').classList.add('btn-danger');
+
+            return true;
+        } catch (err) {
+            console.error("Camera access error: ", err);
+            let errorMsg = 'Could not access the camera.';
+            if (err.name === 'NotAllowedError') {
+                errorMsg = 'Camera permission denied. Please allow access in your browser settings.';
+            } else if (err.name === 'NotFoundError') {
+                errorMsg = 'No camera found on this device.';
+            } else if (err.name === 'OverconstrainedError') {
+                errorMsg = 'Camera configuration not supported.';
             }
+            
+            alert(errorMsg);
+            return false;
+        }
+    }
+    
+    // Stop camera function
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+            
+            const video = document.getElementById('videoFeed');
+            video.style.display = 'none';
+            document.getElementById('cameraPlaceholder').style.display = 'flex';
+            
+            document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-play"></i> Start Camera';
+            document.getElementById('startCameraBtn').classList.remove('btn-danger');
+            document.getElementById('startCameraBtn').classList.add('btn-primary');
+        }
+    }
+    
+    // Capture image function
+    function captureImage() {
+        if (!stream) {
+            alert('Please start the camera first!');
+            return;
         }
         
-        // Capture image function
-        function captureImage() {
+        const video = document.getElementById('videoFeed');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        capturedImageData = canvas.toDataURL('image/jpeg');
+        
+        const capturedImage = document.getElementById('capturedImage');
+        capturedImage.src = capturedImageData;
+        document.getElementById('capturedImageContainer').style.display = 'block';
+        capturedImageContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Navigation System
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize charts
+        initCharts();
+        
+        // Set report date
+        document.getElementById('reportDate').textContent = new Date().toLocaleDateString();
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Navigation links
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageSections = document.querySelectorAll('.page-section');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.id === 'logoutBtn') return;
+                
+                e.preventDefault();
+                navLinks.forEach(navLink => navLink.classList.remove('active'));
+                this.classList.add('active');
+                const targetSection = this.getAttribute('data-section');
+                pageSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(`${targetSection}-section`).classList.add('active');
+                
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Logging out... Redirecting to login page.');
+            window.location.href = 'login.html';
+        });
+        
+        // Camera controls
+        const startCameraBtn = document.getElementById('startCameraBtn');
+        const switchCameraBtn = document.getElementById('switchCameraBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const toggleSoundBtn = document.getElementById('toggleSoundBtn');
+        const soundIcon = document.getElementById('soundIcon');
+        const downloadReportBtn = document.getElementById('downloadReportBtn');
+        const previewReportBtn = document.getElementById('previewReportBtn');
+        const closePdfBtn = document.getElementById('closePdfBtn');
+        
+        let cameraActive = false;
+        let soundEnabled = true;
+
+        startCameraBtn.addEventListener('click', async function() {
+            if (cameraActive) {
+                stopCamera();
+                cameraActive = false;
+            } else {
+                cameraActive = await startCamera(currentCamera);
+            }
+        });
+
+        toggleSoundBtn.addEventListener('click', () => {
             if (!stream) {
+                alert("Please start the camera first!");
+                return;
+            }
+
+            const video = document.getElementById('videoFeed');
+            soundEnabled = !soundEnabled;
+
+            if (soundEnabled) {
+                video.muted = false;
+                soundIcon.classList.remove('fa-volume-mute');
+                soundIcon.classList.add('fa-volume-up');
+            } else {
+                video.muted = true;
+                soundIcon.classList.remove('fa-volume-up');
+                soundIcon.classList.add('fa-volume-mute');
+            }
+        });
+        
+        switchCameraBtn.addEventListener('click', async function() {
+            if (!cameraActive) {
                 alert('Please start the camera first!');
                 return;
             }
             
-            const video = document.getElementById('videoFeed');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            currentCamera = currentCamera === 'user' ? 'environment' : 'user';
+            stopCamera();
+            cameraActive = await startCamera(currentCamera);
+        });
+        
+        captureBtn.addEventListener('click', function() {
+            captureImage();
+        });
+        
+        // Preview report functionality
+        previewReportBtn.addEventListener('click', function() {
+            if (!capturedImageData) {
+                alert('Please capture an image first!');
+                return;
+            }
             
-            // Convert to data URL
-            capturedImageData = canvas.toDataURL('image/jpeg');
+            document.getElementById('previewImage').src = capturedImageData;
             
-            // Display captured image
-            const capturedImage = document.getElementById('capturedImage');
-            capturedImage.src = capturedImageData;
-            document.getElementById('capturedImageContainer').style.display = 'block';
+            // Update vital signs table in preview
+            if (window.latestVitals) {
+                const vitals = window.latestVitals;
+                const tableRows = document.querySelectorAll('.pdf-table tbody tr');
+                
+                if (tableRows.length >= 2) {
+                    // Heart Rate row
+                    const heartRow = tableRows[0];
+                    heartRow.querySelector('td:nth-child(2)').textContent = vitals.heartRate;
+                    const heartStatusCell = heartRow.querySelector('td:nth-child(3)');
+                    heartStatusCell.textContent = vitals.heartStatus;
+                    setStatusColor(heartStatusCell, vitals.heartStatus);
+                    
+                    // Oxygen Level row
+                    const oxygenRow = tableRows[1];
+                    oxygenRow.querySelector('td:nth-child(2)').textContent = vitals.spo2;
+                    const oxygenStatusCell = oxygenRow.querySelector('td:nth-child(3)');
+                    oxygenStatusCell.textContent = vitals.spo2Status;
+                    setStatusColor(oxygenStatusCell, vitals.spo2Status);
+                }
+            }
             
-            // Scroll to captured image
-            capturedImageContainer.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('pdfModal').style.display = 'flex';
+        });
+        
+        // Helper function to set status color in preview
+        function setStatusColor(element, status) {
+            if (status === "Normal" || status === "Optimal") {
+                element.style.color = "var(--success)";
+            } else if (status === "Low" || status === "High" || status === "Lower") {
+                element.style.color = "var(--warning)";
+            } else {
+                element.style.color = "var(--accent)";
+            }
         }
         
-        // Navigation System
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize charts
-            initCharts();
-            
-            // Set report date
-            document.getElementById('reportDate').textContent = new Date().toLocaleDateString();
-            
-            // Mobile menu toggle
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('sidebar');
-            
-            mobileMenuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-            
-            // Navigation links
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pageSections = document.querySelectorAll('.page-section');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.id === 'logoutBtn') return;
-                    
-                    e.preventDefault();
-                    
-                    // Remove active class from all links
-                    navLinks.forEach(navLink => navLink.classList.remove('active'));
-                    
-                    // Add active class to clicked link
-                    this.classList.add('active');
-                    
-                    // Get target section
-                    const targetSection = this.getAttribute('data-section');
-                    
-                    // Hide all sections
-                    pageSections.forEach(section => section.classList.remove('active'));
-                    
-                    // Show target section
-                    document.getElementById(`${targetSection}-section`).classList.add('active');
-                    
-                    // Close mobile menu
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.remove('active');
-                    }
-                });
-            });
-            
-       
-
-            // Logout functionality
-            document.getElementById('logoutBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Logging out... Redirecting to login page.');
-                // In a real app, you would redirect to login page
-                 window.location.href = 'login.html';
-            });
-            
-            // Simulate vital signs data
-            /*setInterval(() => {
-                const heartValue = document.getElementById('currentHeartRate');
-                const oxygenValue = document.getElementById('currentOxygen');
-                const cameraHeart = document.getElementById('cameraHeartRate');
-                const cameraOxygen = document.getElementById('cameraOxygen');
-                
-                // Generate random values within normal ranges
-                const newHeart = Math.floor(Math.random() * 10) + 70;
-                const newOxygen = Math.floor(Math.random() * 3) + 96;
-                
-                heartValue.textContent = newHeart;
-                oxygenValue.textContent = newOxygen + '%';
-                cameraHeart.textContent = newHeart;
-                cameraOxygen.textContent = newOxygen + '%';
-            }, 5000);*/
-            
-            // Camera controls
-            const startCameraBtn = document.getElementById('startCameraBtn');
-            const switchCameraBtn = document.getElementById('switchCameraBtn');
-            const toggleSoundBtn = document.getElementById('toggleSoundBtn');
-            const soundIcon = document.getElementById('soundIcon');
-            const downloadReportBtn = document.getElementById('downloadReportBtn');
-            const previewReportBtn = document.getElementById('previewReportBtn');
-            
-            let cameraActive = false;
-            
-            startCameraBtn.addEventListener('click', async function() {
-                if (cameraActive) {
-                    stopCamera();
-                    cameraActive = false;
-                } else {
-                    cameraActive = await startCamera(currentCamera);
-                }
-            });
-
-            let soundEnabled = true;
-
-                toggleSoundBtn.addEventListener('click', () => {
-                    if (!stream) {
-                        alert("Please start the camera first!");
-                        return;
-                    }
-
-                    const video = document.getElementById('videoFeed');
-                    soundEnabled = !soundEnabled;
-
-                    if (soundEnabled) {
-                        video.muted = false;
-                        soundIcon.classList.remove('fa-volume-mute');
-                        soundIcon.classList.add('fa-volume-up');
-                    } else {
-                        video.muted = true;
-                        soundIcon.classList.remove('fa-volume-up');
-                        soundIcon.classList.add('fa-volume-mute');
-                    }
-                });
-
-            
-            
-            // Switch camera function
-            switchCameraBtn.addEventListener('click', async function() {
-                if (!cameraActive) {
-                    alert('Please start the camera first!');
-                    return;
-                }
-                
-                // Toggle camera
-                currentCamera = currentCamera === 'user' ? 'environment' : 'user';
-                
-                // Restart camera with new facing mode
-                stopCamera();
-                cameraActive = await startCamera(currentCamera);
-            });
-            
-            captureBtn.addEventListener('click', function() {
-                captureImage();
-            });
-            
-            // Preview report functionality
-            previewReportBtn.addEventListener('click', function() {
-                if (!capturedImageData) {
-                    alert('Please capture an image first!');
-                    return;
-                }
-                
-                // Set the preview image
-                document.getElementById('previewImage').src = capturedImageData;
-                document.getElementById('pdfModal').style.display = 'flex';
-            });
-            
-            // Close PDF preview
-            document.getElementById('closePdfBtn').addEventListener('click', function() {
-                document.getElementById('pdfModal').style.display = 'none';
-            });
-            
-            // Download report functionality
-            downloadReportBtn.addEventListener('click', function() {
-                if (!capturedImageData) {
-                    alert('Please capture an image first!');
-                    return;
-                }
-                
-                // Using jsPDF to generate a PDF report
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title and date
-                doc.setFontSize(22);
-                doc.text('HealthAI Patient Report', 105, 20, null, null, 'center');
-                doc.setFontSize(12);
-                doc.setTextColor(100);
-                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 30, null, null, 'center');
-                
-                // Add separator
-                doc.setDrawColor(52, 152, 219);
-                doc.setLineWidth(0.5);
-                doc.line(20, 35, 190, 35);
-                
-                // Add patient summary with empty fields
-                doc.setFontSize(16);
-                doc.setTextColor(0);
-                doc.text('Patient Summary', 20, 45);
-                
-                doc.setFontSize(12);
-                doc.text('Name: __________', 20, 55);
-                doc.text('ID Number: __________', 20, 65);
-                
-                // Add captured image
-                doc.setFontSize(16);
-                doc.text('Captured Image', 20, 75);
-                doc.addImage(capturedImageData, 'JPEG', 20, 80, 170, 100);
-                
-                // Add heart rate chart
-                doc.setFontSize(16);
-                doc.text('Heart Rate History', 20, 185);
-                doc.addImage(document.getElementById('heartRateChart').toDataURL(), 'JPEG', 20, 190, 170, 80);
-                
-                // Add page number
-                doc.setFontSize(10);
-                doc.setTextColor(150);
-                doc.text('Page 1 of 2', 105, 280, null, null, 'center');
-                
-                // Add second page
-                doc.addPage();
-                
-                // Page 2 header
-                doc.setFontSize(22);
-                doc.text('HealthAI Patient Report', 105, 20, null, null, 'center');
-                doc.setFontSize(12);
-                doc.setTextColor(100);
-                doc.text('Page 2: Detailed Analysis', 105, 30, null, null, 'center');
-                doc.setDrawColor(52, 152, 219);
-                doc.line(20, 35, 190, 35);
-                
-                // Add oxygen chart
-                doc.setFontSize(16);
-                doc.text('Oxygen Level History', 20, 45);
-                doc.addImage(document.getElementById('oxygenChart').toDataURL(), 'JPEG', 20, 50, 170, 80);
-                
-                // Add vital signs summary
-                doc.setFontSize(16);
-                doc.text('Vital Signs Summary', 20, 135);
-                
-                // Create table for vital signs
-                const vitalData = [
-                    { parameter: 'Heart Rate', value: document.getElementById('currentHeartRate').textContent, status: 'Normal' },
-                    { parameter: 'Oxygen Level', value: document.getElementById('currentOxygen').textContent, status: 'Optimal' },
-                    
-                ];
-                
-                // Table headers
-                doc.setFillColor(52, 152, 219);
-                doc.setTextColor(255);
-                doc.rect(20, 140, 170, 10, 'F');
-                doc.text('Parameter', 25, 147);
-                doc.text('Value', 100, 147);
-                doc.text('Status', 160, 147);
-                
-                // Table rows
-                vitalData.forEach((item, index) => {
-                    const yPos = 150 + (index * 10);
-                    doc.setFillColor(index % 2 === 0 ? 240 : 255);
-                    doc.setTextColor(0);
-                    doc.rect(20, yPos, 170, 10, 'F');
-                    doc.text(item.parameter, 25, yPos + 7);
-                    doc.text(item.value, 100, yPos + 7);
-                    
-                    // Color-code status
-                    if (item.status === 'Normal' || item.status === 'Optimal') {
-                        doc.setTextColor(46, 204, 113);
-                    } else if (item.status === 'Warning') {
-                        doc.setTextColor(243, 156, 18);
-                    } else {
-                        doc.setTextColor(231, 76, 60);
-                    }
-                    doc.text(item.status, 160, yPos + 7);
-                });
-                
-                // Add health recommendations
-                doc.setFontSize(16);
-                doc.setTextColor(0);
-                doc.text('Health Recommendations', 20, 190);
-                
-                const recommendations = [
-                    "Continue current medication regimen",
-                    "Follow up with cardiologist in 3 months",
-                    "Maintain healthy lifestyle habits",
-                    "Increase daily physical activity",
-                    
-                ];
-                
-                recommendations.forEach((rec, index) => {
-                    doc.setFontSize(12);
-                    doc.setTextColor(0);
-                    doc.text(`- ${rec}`, 20, 200 + (index * 7));
-                });
-                
-                // Add page number
-                doc.setFontSize(10);
-                doc.setTextColor(150);
-                doc.text('Page 2 of 2', 105, 280, null, null, 'center');
-                
-                // Add footer
-                doc.setFontSize(10);
-                doc.setTextColor(100);
-                doc.text('Generated by Health Patient Monitoring System', 105, 290, null, null, 'center');
-                
-                // Save the PDF
-                doc.save(`health_report_${new Date().getTime()}.pdf`);
-                
-                // Show confirmation
-                alert('Comprehensive health report downloaded successfully!');
-            });
+        // Close PDF preview
+        closePdfBtn.addEventListener('click', function() {
+            document.getElementById('pdfModal').style.display = 'none';
         });
-    </script>
+        
+        // Download report functionality
+        downloadReportBtn.addEventListener('click', function() {
+            if (!capturedImageData) {
+                alert('Please capture an image first!');
+                return;
+            }
+            
+            // Get latest vitals or fallback to current dashboard values
+            const vitals = window.latestVitals || {
+                heartRate: document.getElementById('currentHeartRate').textContent,
+                spo2: document.getElementById('currentOxygen').textContent,
+                heartStatus: "Normal",
+                spo2Status: "Optimal"
+            };
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Page 1
+            doc.setFontSize(22);
+            doc.text('HealthAI Patient Report', 105, 20, null, null, 'center');
+            doc.setFontSize(12);
+            doc.setTextColor(100);
+            doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 30, null, null, 'center');
+            doc.setDrawColor(52, 152, 219);
+            doc.setLineWidth(0.5);
+            doc.line(20, 35, 190, 35);
+            
+            doc.setFontSize(16);
+            doc.setTextColor(0);
+            doc.text('Patient Summary', 20, 45);
+            doc.setFontSize(12);
+            doc.text('Name: __________', 20, 55);
+            doc.text('ID Number: __________', 20, 65);
+            
+            doc.setFontSize(16);
+            doc.text('Captured Image', 20, 75);
+            doc.addImage(capturedImageData, 'JPEG', 20, 80, 170, 100);
+            
+            doc.setFontSize(16);
+            doc.text('Heart Rate History', 20, 185);
+            doc.addImage(document.getElementById('heartRateChart').toDataURL(), 'JPEG', 20, 190, 170, 80);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(150);
+            doc.text('Page 1 of 2', 105, 280, null, null, 'center');
+            
+            // Page 2
+            doc.addPage();
+            doc.setFontSize(22);
+            doc.text('HealthAI Patient Report', 105, 20, null, null, 'center');
+            doc.setFontSize(12);
+            doc.setTextColor(100);
+            doc.text('Page 2: Detailed Analysis', 105, 30, null, null, 'center');
+            doc.setDrawColor(52, 152, 219);
+            doc.line(20, 35, 190, 35);
+            
+            doc.setFontSize(16);
+            doc.text('Oxygen Level History', 20, 45);
+            doc.addImage(document.getElementById('oxygenChart').toDataURL(), 'JPEG', 20, 50, 170, 80);
+            
+            doc.setFontSize(16);
+            doc.text('Vital Signs Summary', 20, 135);
+            
+            // Create table for vital signs
+            const vitalData = [
+                { 
+                    parameter: 'Heart Rate', 
+                    value: vitals.heartRate, 
+                    status: vitals.heartStatus 
+                },
+                { 
+                    parameter: 'Oxygen Level', 
+                    value: vitals.spo2, 
+                    status: vitals.spo2Status 
+                },
+            ];
+            
+            // Table headers
+            doc.setFillColor(52, 152, 219);
+            doc.setTextColor(255);
+            doc.rect(20, 140, 170, 10, 'F');
+            doc.text('Parameter', 25, 147);
+            doc.text('Value', 100, 147);
+            doc.text('Status', 160, 147);
+            
+            // Table rows
+            vitalData.forEach((item, index) => {
+                const yPos = 150 + (index * 10);
+                doc.setFillColor(index % 2 === 0 ? 240 : 255);
+                doc.setTextColor(0);
+                doc.rect(20, yPos, 170, 10, 'F');
+                doc.text(item.parameter, 25, yPos + 7);
+                doc.text(item.value, 100, yPos + 7);
+                
+                // Color-code status based on severity
+                if (item.status === "Normal" || item.status === "Optimal") {
+                    doc.setTextColor(46, 204, 113); // Green
+                } else if (item.status === "Low" || item.status === "High" || item.status === "Lower") {
+                    doc.setTextColor(243, 156, 18); // Orange
+                } else {
+                    doc.setTextColor(231, 76, 60); // Red
+                }
+                doc.text(item.status, 160, yPos + 7);
+            });
+            
+            doc.setFontSize(16);
+            doc.setTextColor(0);
+            doc.text('Health Recommendations', 20, 190);
+            
+            const recommendations = [
+                "Continue current medication regimen",
+                "Follow up with cardiologist in 3 months",
+                "Maintain healthy lifestyle habits",
+                "Increase daily physical activity",
+            ];
+            
+            recommendations.forEach((rec, index) => {
+                doc.setFontSize(12);
+                doc.setTextColor(0);
+                doc.text(`- ${rec}`, 20, 200 + (index * 7));
+            });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(150);
+            doc.text('Page 2 of 2', 105, 280, null, null, 'center');
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Generated by Health Patient Monitoring System', 105, 290, null, null, 'center');
+            
+            // Save the PDF
+            doc.save(`health_report_${new Date().getTime()}.pdf`);
+            alert('Comprehensive health report downloaded successfully!');
+        });
+    });
+</script>
 </body>
 </html>

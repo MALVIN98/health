@@ -1263,61 +1263,60 @@
   const database = firebase.database();
 
   // Live update from /monitoring
-  database.ref("monitoring").on("value", (snapshot) => {
+   database.ref("health").on("value", (snapshot) => {
   const data = snapshot.val();
   if (data) {
     // Update heart rate and oxygen values
-    document.getElementById("currentHeartRate").textContent = data.bp + " bpm";
-    document.getElementById("currentOxygen").textContent = data.oxygen + "%";
+   document.getElementById("currentHeartRate").textContent = data.heartRate + " bpm";
+   document.getElementById("currentOxygen").textContent = data.spo2 + "%";
 
-    // Update heart rate status
-    const heartFooter = document.querySelector('#currentHeartRate').closest('.card').querySelector('.card-footer');
-    if (data.bp < 60) {
-      heartFooter.textContent = "bpm • Low";
-    } else if (data.bp <= 100) {
-      heartFooter.textContent = "bpm • Normal";
-    } else {
-      heartFooter.textContent = "bpm • High";
-    }
+     // Update heart rate status
+  const heartFooter = document.querySelector('#currentHeartRate').closest('.card').querySelector('.card-footer');
+  if (data.heartRate < 60) {
+    heartFooter.textContent = "bpm • Low";
+  } else if (data.heartRate <= 100) {
+    heartFooter.textContent = "bpm • Normal";
+  } else {
+    heartFooter.textContent = "bpm • High";
+  }
 
-    // Update SpO2 status
-    const oxygenFooter = document.querySelector('#currentOxygen').closest('.card').querySelector('.card-footer');
-    if (data.oxygen < 90) {
-      oxygenFooter.textContent = "SpO2 • Lower";
-    } else if (data.oxygen <= 94) {
-      oxygenFooter.textContent = "SpO2 • Normal";
-    } else {
-      oxygenFooter.textContent = "SpO2 • Optimal";
-    }
+  // Update SpO2 status
+  const oxygenFooter = document.querySelector('#currentOxygen').closest('.card').querySelector('.card-footer');
+  if (data.spo2 < 90) {
+    oxygenFooter.textContent = "SpO2 • Lower";
+  } else if (data.spo2 <= 94) {
+    oxygenFooter.textContent = "SpO2 • Normal";
+  } else {
+    oxygenFooter.textContent = "SpO2 • Optimal";
+  }
 
-    // ✅ LIVE CHART UPDATE (MUST BE inside this if-block)
+
+      // ✅ LIVE CHART UPDATE (MUST BE inside this if-block)
     const now = new Date();
     const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
 
     // Heart Rate Chart Update
     if (heartRateChartInstance) {
-        heartRateChartInstance.data.labels.push(timeLabel);
-        heartRateChartInstance.data.datasets[0].data.push(data.bp);
-
-        if (heartRateChartInstance.data.labels.length > 10) {
-            heartRateChartInstance.data.labels.shift();
-            heartRateChartInstance.data.datasets[0].data.shift();
-        }
-        heartRateChartInstance.update();
+    heartRateChartInstance.data.labels.push(timeLabel);
+    heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
+    if (heartRateChartInstance.data.labels.length > 10) {
+      heartRateChartInstance.data.labels.shift();
+      heartRateChartInstance.data.datasets[0].data.shift();
     }
+    heartRateChartInstance.update();
+  }
 
     // Oxygen Chart Update
-    if (oxygenChartInstance) {
-        oxygenChartInstance.data.labels.push(timeLabel);
-        oxygenChartInstance.data.datasets[0].data.push(data.oxygen);
-
-        if (oxygenChartInstance.data.labels.length > 10) {
-            oxygenChartInstance.data.labels.shift();
-            oxygenChartInstance.data.datasets[0].data.shift();
-        }
-        oxygenChartInstance.update();
+     if (oxygenChartInstance) {
+    oxygenChartInstance.data.labels.push(timeLabel);
+    oxygenChartInstance.data.datasets[0].data.push(data.spo2);
+    if (oxygenChartInstance.data.labels.length > 10) {
+      oxygenChartInstance.data.labels.shift();
+      oxygenChartInstance.data.datasets[0].data.shift();
     }
+    oxygenChartInstance.update();
   }
+}
 });
 
 

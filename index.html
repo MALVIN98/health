@@ -1776,6 +1776,10 @@
             doc.save(`health_report_${new Date().getTime()}.pdf`);
             alert('Comprehensive health report downloaded successfully!');
         });
+
+            doc.output('blob').then(pdfBlob => {
+            saveToDrive(pdfBlob);  // triggers upload to Google Drive
+        });
     });
 </script>
 </body>

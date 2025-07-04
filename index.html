@@ -6,6 +6,7 @@
     <title>Health Monitoring System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><!-- Firebase App (core) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <!-- Firebase Realtime Database -->
@@ -1359,58 +1360,80 @@
     let oxygenChartInstance;
 
     function initCharts() {
+    Chart.register(ChartDataLabels);
+
         const heartCtx = document.getElementById('heartRateChart').getContext('2d');
         const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
 
         heartRateChartInstance = new Chart(heartCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Heart Rate (bpm)',
-                    data: [0],
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        min: 20,
-                        max: 140
-                    }
-                }
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Heart Rate (bpm)',
+            data: [0],
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 20,
+                max: 140
             }
-        });
+        },
+        plugins: {
+            datalabels: {
+                align: 'top',
+                anchor: 'end',
+                font: { weight: 'bold' },
+                formatter: value => value + ' bpm'
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
 
-        oxygenChartInstance = new Chart(oxygenCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Oxygen Level (%)',
-                    data: [0],
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        min: 70,
-                        max: 110
-                    }
-                }
+
+       oxygenChartInstance = new Chart(oxygenCtx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Oxygen Level (%)',
+            data: [0],
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 60,
+                max: 100
             }
-        });
+        },
+        plugins: {
+            datalabels: {
+                align: 'top',
+                anchor: 'end',
+                font: { weight: 'bold' },
+                formatter: value => value + '%'
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
     }
 
     // Global variables

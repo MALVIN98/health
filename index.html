@@ -1350,35 +1350,29 @@ if (data) {
     const now = new Date();
     const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
 
-    if (previousHeartRate !== null && previousSpO2 !== null) {
-        if (heartRateChartInstance) {
-            heartRateChartInstance.data.labels.push(timeLabel);
-            heartRateChartInstance.data.datasets[0].data.push(previousHeartRate);
-            if (heartRateChartInstance.data.labels.length > 10) {
-                heartRateChartInstance.data.labels.shift();
-                heartRateChartInstance.data.datasets[0].data.shift();
+     // Heart Rate Chart Update
+            if (heartRateChartInstance) {
+                heartRateChartInstance.data.labels.push(timeLabel);
+                heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
+                if (heartRateChartInstance.data.labels.length > 5) {
+                    heartRateChartInstance.data.labels.shift();
+                    heartRateChartInstance.data.datasets[0].data.shift();
+                }
+                heartRateChartInstance.update();
             }
-            heartRateChartInstance.update();
-        }
 
-        if (oxygenChartInstance) {
-            oxygenChartInstance.data.labels.push(timeLabel);
-            oxygenChartInstance.data.datasets[0].data.push(previousSpO2);
-            if (oxygenChartInstance.data.labels.length > 10) {
-                oxygenChartInstance.data.labels.shift();
-                oxygenChartInstance.data.datasets[0].data.shift();
+            // Oxygen Chart Update
+            if (oxygenChartInstance) {
+                oxygenChartInstance.data.labels.push(timeLabel);
+                oxygenChartInstance.data.datasets[0].data.push(data.spo2);
+                if (oxygenChartInstance.data.labels.length > 5) {
+                    oxygenChartInstance.data.labels.shift();
+                    oxygenChartInstance.data.datasets[0].data.shift();
+                }
+                oxygenChartInstance.update();
             }
-            oxygenChartInstance.update();
         }
-    }
-
-    // Step 3: Shift values for next time
-    previousHeartRate = latestHeartRate;
-    previousSpO2 = latestSpO2;
-
-    latestHeartRate = data.heartRate;
-    latestSpO2 = data.spo2;
-});
+    });
 
     // Initialize Charts
     let heartRateChartInstance;

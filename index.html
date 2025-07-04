@@ -1366,73 +1366,54 @@
         const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
 
         heartRateChartInstance = new Chart(heartCtx, {
-    type: 'line',
-    data: {
-        labels: [],
-        datasets: [{
-            label: 'Heart Rate (bpm)',
-            data: [0],
-            borderColor: '#e74c3c',
-            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-            tension: 0.4,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                min: 20,
-                max: 140
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Heart Rate (bpm)',
+                    data: [0],
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 20,
+                        max: 140
+                    }
+                }
             }
-        },
-        plugins: {
-            datalabels: {
-                align: 'top',
-                anchor: 'end',
-                font: { weight: 'bold' },
-                formatter: value => value + ' bpm'
-            }
-        }
-    },
-    plugins: [ChartDataLabels]
-});
+        });
 
-
-       oxygenChartInstance = new Chart(oxygenCtx, {
-    type: 'line',
-    data: {
-        labels: [],
-        datasets: [{
-            label: 'Oxygen Level (%)',
-            data: [0],
-            borderColor: '#3498db',
-            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-            tension: 0.4,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                min: 60,
-                max: 100
+        oxygenChartInstance = new Chart(oxygenCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Oxygen Level (%)',
+                    data: [0],
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 60,
+                        max: 100
+                    }
+                }
             }
-        },
-        plugins: {
-            datalabels: {
-                align: 'top',
-                anchor: 'end',
-                font: { weight: 'bold' },
-                formatter: value => value + '%'
-            }
-        }
-    },
-    plugins: [ChartDataLabels]
-});
+        });
 
     }
 

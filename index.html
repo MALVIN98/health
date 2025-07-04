@@ -1335,7 +1335,7 @@
             if (heartRateChartInstance) {
                 heartRateChartInstance.data.labels.push(timeLabel);
                 heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
-                if (heartRateChartInstance.data.labels.length > 10) {
+                if (heartRateChartInstance.data.labels.length > 6) {
                     heartRateChartInstance.data.labels.shift();
                     heartRateChartInstance.data.datasets[0].data.shift();
                 }
@@ -1346,7 +1346,7 @@
             if (oxygenChartInstance) {
                 oxygenChartInstance.data.labels.push(timeLabel);
                 oxygenChartInstance.data.datasets[0].data.push(data.spo2);
-                if (oxygenChartInstance.data.labels.length > 10) {
+                if (oxygenChartInstance.data.labels.length > 6) {
                     oxygenChartInstance.data.labels.shift();
                     oxygenChartInstance.data.datasets[0].data.shift();
                 }
@@ -1366,54 +1366,78 @@
         const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
 
         heartRateChartInstance = new Chart(heartCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Heart Rate (bpm)',
-                    data: [0],
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        min: 20,
-                        max: 140
-                    }
-                }
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Heart Rate (bpm)',
+            data: [0],
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0,  // <-- hides data point dots
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 20,
+                max: 140
             }
-        });
+        },
+        plugins: {
+            datalabels: {
+                align: 'top',
+                anchor: 'center',
+                font: { weight: 'bold' },
+                formatter: value => value + ' bpm',
+                color: '#e74c3c'
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
 
         oxygenChartInstance = new Chart(oxygenCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Oxygen Level (%)',
-                    data: [0],
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        min: 60,
-                        max: 100
-                    }
-                }
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Oxygen Level (%)',
+            data: [0],
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0,  // <-- hides data point dots
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                min: 60,
+                max: 100
             }
-        });
+        },
+        plugins: {
+            datalabels: {
+                align: 'top',
+                anchor: 'center',
+                font: { weight: 'bold' },
+                formatter: value => value + '%',
+                color: '#3498db'
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
 
     }
 

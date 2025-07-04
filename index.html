@@ -11,8 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <!-- Firebase Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+     <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
     <script type="text/javascript" src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
@@ -1265,9 +1265,10 @@
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    
 
     // Live update from Firebase
-    database.ref("health").on("value", (snapshot) => {
+    database.ref("health").once("value", (snapshot) => {
         const data = snapshot.val();
         if (data) {
             const heartRate = data.heartRate;
@@ -1331,31 +1332,11 @@
             const now = new Date();
             const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-            const data = snapshot.val();
-if (data) {
-    const heartRate = data.heartRate;
-    const spo2 = data.spo2;
-
-    // 1. Update DOM and global vitals
-    document.getElementById("currentHeartRate").textContent = heartRate + " bpm";
-    document.getElementById("currentOxygen").textContent = spo2 + "%";
-
-    window.latestVitals = {
-        heartRate: heartRate + " bpm",
-        spo2: spo2 + "%",
-        heartStatus: ,
-        spo2Status: 
-    };
-
-    // 2. Push both to chart
-    const now = new Date();
-    const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
-
-     // Heart Rate Chart Update
+            // Heart Rate Chart Update
             if (heartRateChartInstance) {
                 heartRateChartInstance.data.labels.push(timeLabel);
                 heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
-                if (heartRateChartInstance.data.labels.length > 5) {
+                if (heartRateChartInstance.data.labels.length > 10) {
                     heartRateChartInstance.data.labels.shift();
                     heartRateChartInstance.data.datasets[0].data.shift();
                 }
@@ -1366,7 +1347,7 @@ if (data) {
             if (oxygenChartInstance) {
                 oxygenChartInstance.data.labels.push(timeLabel);
                 oxygenChartInstance.data.datasets[0].data.push(data.spo2);
-                if (oxygenChartInstance.data.labels.length > 5) {
+                if (oxygenChartInstance.data.labels.length > 10) {
                     oxygenChartInstance.data.labels.shift();
                     oxygenChartInstance.data.datasets[0].data.shift();
                 }
@@ -1380,12 +1361,10 @@ if (data) {
     let oxygenChartInstance;
 
     function initCharts() {
-    
-
         const heartCtx = document.getElementById('heartRateChart').getContext('2d');
         const oxygenCtx = document.getElementById('oxygenChart').getContext('2d');
 
-       heartRateChartInstance = new Chart(heartCtx, {
+        heartRateChartInstance = new Chart(heartCtx, {
             type: 'line',
             data: {
                 labels: [],
@@ -1434,8 +1413,6 @@ if (data) {
                 }
             }
         });
-
-
     }
 
     // Global variables
@@ -1628,6 +1605,37 @@ if (data) {
             }
             
             document.getElementById('previewImage').src = capturedImageData;
+
+            // Add heart rate chart image to preview
+            const heartChartImg = document.createElement('img');
+            heartChartImg.src = document.getElementById('heartRateChart').toDataURL();
+            heartChartImg.style.width = "100%";
+            heartChartImg.style.marginTop = "10px";
+
+            const heartGraphContainer = document.querySelectorAll('.pdf-graph')[0];
+            heartGraphContainer.innerHTML = ''; // Clear placeholder
+            heartGraphContainer.appendChild(heartChartImg);
+
+            // Add oxygen chart image to preview
+            const oxygenChartImg = document.createElement('img');
+            oxygenChartImg.src = document.getElementById('oxygenChart').toDataURL();
+            oxygenChartImg.style.width = "100%";
+            oxygenChartImg.style.marginTop = "10px";
+
+            const oxygenGraphContainer = document.querySelectorAll('.pdf-graph')[1];
+            oxygenGraphContainer.innerHTML = '';
+            oxygenGraphContainer.appendChild(oxygenChartImg);
+
+        // Optional: reuse heart chart for real-time chart preview
+        const realTimeChartImg = document.createElement('img');
+        realTimeChartImg.src = document.getElementById('heartRateChart').toDataURL(); // or oxygenChart
+        realTimeChartImg.style.width = "100%";
+        realTimeChartImg.style.marginTop = "10px";
+
+        const realtimeGraphContainer = document.querySelectorAll('.pdf-graph')[2];
+        realtimeGraphContainer.innerHTML = '';
+        realtimeGraphContainer.appendChild(realTimeChartImg);
+
             
             // Update vital signs table in preview
             if (window.latestVitals) {
@@ -1799,8 +1807,7 @@ if (data) {
             doc.setFontSize(10);
             doc.setTextColor(100);
             doc.text('Generated by Health Patient Monitoring System', 105, 290, null, null, 'center');
-
-            // sini
+            
             function saveToDrive(pdfBlob) {
             const CLIENT_ID = 'file://C:/Users/MALVIN_RANDZZZ/Desktop/testing/index.html';  // replace with real OAuth client ID
             const SCOPES = 'https://www.googleapis.com/auth/drive.file';
@@ -1833,15 +1840,15 @@ if (data) {
 
             gapi.load('client', onGAPILoad);
         }
-            
+
             // Save the PDF
             doc.save(`health_report_${new Date().getTime()}.pdf`);
             alert('Comprehensive health report downloaded successfully!');
         });
-
             doc.output('blob').then(pdfBlob => {
             saveToDrive(pdfBlob);  // triggers upload to Google Drive
         });
+
     });
 </script>
 </body>

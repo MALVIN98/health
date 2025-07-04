@@ -1330,28 +1330,47 @@
             const now = new Date();
             const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-            // Heart Rate Chart Update
-            if (heartRateChartInstance) {
-                heartRateChartInstance.data.labels.push(timeLabel);
-                heartRateChartInstance.data.datasets[0].data.push(data.heartRate);
-                if (heartRateChartInstance.data.labels.length > 6) {
-                    heartRateChartInstance.data.labels.shift();
-                    heartRateChartInstance.data.datasets[0].data.shift();
-                }
-                heartRateChartInstance.update();
-            }
+            const data = snapshot.val();
+if (data) {
+    const heartRate = data.heartRate;
+    const spo2 = data.spo2;
 
-            // Oxygen Chart Update
-            if (oxygenChartInstance) {
-                oxygenChartInstance.data.labels.push(timeLabel);
-                oxygenChartInstance.data.datasets[0].data.push(data.spo2);
-                if (oxygenChartInstance.data.labels.length > 6) {
-                    oxygenChartInstance.data.labels.shift();
-                    oxygenChartInstance.data.datasets[0].data.shift();
-                }
-                oxygenChartInstance.update();
-            }
+    // 1. Update DOM and global vitals
+    document.getElementById("currentHeartRate").textContent = heartRate + " bpm";
+    document.getElementById("currentOxygen").textContent = spo2 + "%";
+
+    window.latestVitals = {
+        heartRate: heartRate + " bpm",
+        spo2: spo2 + "%",
+        heartStatus: ...,
+        spo2Status: ...
+    };
+
+    // 2. Push both to chart
+    const now = new Date();
+    const timeLabel = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
+
+    if (heartRateChartInstance) {
+        heartRateChartInstance.data.labels.push(timeLabel);
+        heartRateChartInstance.data.datasets[0].data.push(heartRate);
+        if (heartRateChartInstance.data.labels.length > 10) {
+            heartRateChartInstance.data.labels.shift();
+            heartRateChartInstance.data.datasets[0].data.shift();
         }
+        heartRateChartInstance.update();
+    }
+
+    if (oxygenChartInstance) {
+        oxygenChartInstance.data.labels.push(timeLabel);
+        oxygenChartInstance.data.datasets[0].data.push(spo2);  // use direct variable
+        if (oxygenChartInstance.data.labels.length > 10) {
+            oxygenChartInstance.data.labels.shift();
+            oxygenChartInstance.data.datasets[0].data.shift();
+        }
+        oxygenChartInstance.update();
+    }
+}
+
     });
 
     // Initialize Charts

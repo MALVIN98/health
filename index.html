@@ -1004,7 +1004,7 @@
                             <div class="vital-icon vital-heart">
                                 <i class="fas fa-heartbeat"></i>
                             </div>
-                            <div class="vital-value" id="cameraHeartRate">76</div>
+                            <div class="vital-value" id="cameraHeartRate">0</div>
                             <div class="vital-label">Heart Rate (BPM)</div>
                             <div class="vital-status status-normal">Normal</div>
                         </div>
@@ -1013,7 +1013,7 @@
                             <div class="vital-icon vital-oxygen">
                                 <i class="fas fa-lungs"></i>
                             </div>
-                            <div class="vital-value" id="cameraOxygen">98%</div>
+                            <div class="vital-value" id="cameraOxygen">0%</div>
                             <div class="vital-label">Oxygen Level (%)</div>
                             <div class="vital-status status-normal">Optimal</div>
                         </div>
@@ -1263,7 +1263,12 @@
     const database = firebase.database();
 
     // Live update from Firebase
+    let isFirstUpdate = true;
     database.ref("health").on("value", (snapshot) => {
+     if (isFirstUpdate) {
+        isFirstUpdate = false;
+        return; // 👈 Skip the first initial load
+    }
         const data = snapshot.val();
         if (data) {
             const heartRate = data.heartRate;
@@ -1320,7 +1325,7 @@
                 heartRate: heartRate + " bpm",
                 spo2: spo2 + "%",
                 heartStatus,
-                spo2Status
+                spo2Status,
             };
 
             // Update charts
@@ -1362,7 +1367,7 @@
         heartRateChartInstance = new Chart(heartCtx, {
             type: 'line',
             data: {
-                labels: [],
+                labels: ['Start'],
                 datasets: [{
                     label: 'Heart Rate (bpm)',
                     data: [0],
@@ -1387,7 +1392,7 @@
         oxygenChartInstance = new Chart(oxygenCtx, {
             type: 'line',
             data: {
-                labels: [],
+                labels: ['Start'],
                 datasets: [{
                     label: 'Oxygen Level (%)',
                     data: [0],
